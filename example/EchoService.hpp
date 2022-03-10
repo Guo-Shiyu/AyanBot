@@ -1,9 +1,9 @@
 #pragma once
 
-#include "../Ayan/core/service.h"
-#include "../Ayan/core/apicall.h"
+#include "../core/service.h"
+#include "../core/apicall.h"
 
-class Echo : public MessageService<Echo>
+class EchoService : public MessageService<EchoService>
 {
 public:
 	std::string_view name() const override

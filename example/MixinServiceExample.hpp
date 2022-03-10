@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../Ayan/core/service.h"
-#include "../Ayan/core/apicall.h"
+#include "../core/service.h"
+#include "../core/apicall.h"
 
 /*
  *  unstable example
