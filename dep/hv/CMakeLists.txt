@@ -24,7 +24,7 @@ option(USE_MULTIMAP "MultiMap" OFF)
 option(WITH_CURL "with curl library" OFF)
 option(WITH_NGHTTP2 "with nghttp2 library" OFF)
 
-option(WITH_OPENSSL "with openssl library" ON)
+option(WITH_OPENSSL "with openssl library" OFF)
 option(WITH_GNUTLS  "with gnutls library"  OFF)
 option(WITH_MBEDTLS "with mbedtls library" OFF)
 
