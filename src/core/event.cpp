@@ -109,7 +109,7 @@ namespace ayan
 		return HeartBeat{
 			.time = packet["time"].get<int64_t>(),
 			.interval = packet["interval"].get<int64_t>(),
-			.status = parse_status(packet["status"]),
+			// .status = parse_status(packet["status"]),
 		};
 	}
 

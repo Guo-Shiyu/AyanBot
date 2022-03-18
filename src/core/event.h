@@ -94,7 +94,10 @@ namespace ayan
     {
         int64_t time;
         int64_t interval; /// ms
-        Status status;
+        
+        // todo:
+        // unstable onebot interface
+        // Status status;
     };
 
     enum class LifeCycSubType

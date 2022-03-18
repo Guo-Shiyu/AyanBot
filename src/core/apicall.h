@@ -64,7 +64,7 @@ namespace ayan
 				delete pms;
 			};
 
-			size_t echo_code = random() + 1; 	/// avoid 0, which is ApiCall::IgNoreResultFlag
+			size_t echo_code = random() + 1; /// avoid 0, which is ApiCall::IgNoreResultFlag
 			_bot->set_hook(echo_code, on_ready);
 			call(echo_code);
 			return ret;
@@ -73,35 +73,18 @@ namespace ayan
 		template <typename R>
 		void handle(const std::function<R(const json &)> &unpack_fn, const std::function<void(R &&)> &handle)
 		{
-			std::future<R> future = get<R>(unpack_fn);
-
-			auto wait_finish = [=, fu = future.share()]() mutable
+			auto on_ready = [=](const json &packet)
 			{
-				std::future_status state = fu.wait_for(std::chrono::milliseconds(Bot::MaxHookTime));
-				if (state == std::future_status::ready)
-				{
-					R result;
-					try
-					{
-						result = fu.get();
-					}
-					catch (const std::exception &e)
-					{
-						err_polish(e, "Hook Unpack", "failed");
-					}
-
-					try
-					{
-						std::invoke(handle, std::move(result));
-					}
-					catch (const std::exception &e)
-					{
-						err_polish(e, "Hook Handle", "failed");
-					}
-				}
+				/// specialize for 'void'
+				if constexpr (std::is_same<R, void>())
+					std::invoke(handle);
+				else
+					std::invoke(handle, std::invoke(unpack_fn, packet));
 			};
 
-			_bot->home().thread_pool().nextLoop()->queueInLoop(wait_finish);
+			size_t echo_code = random() + 1; /// avoid 0, which is ApiCall::IgNoreResultFlag
+			_bot->set_hook(echo_code, on_ready);
+			call(echo_code);
 		}
 
 		ApiCall &clear_packet();

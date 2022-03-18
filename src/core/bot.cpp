@@ -94,7 +94,7 @@ namespace ayan
 			catch (const std::exception &e)
 			{
 				std::string err_info = e.what();
-				this->err("{}", err_info);
+				this->err("on message: {}", err_info);
 			}
 		};
 		_conn.open(_netaddr.c_str());

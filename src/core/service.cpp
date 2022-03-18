@@ -2,7 +2,7 @@
 
 namespace ayan
 {
-    namespace default_service
+    namespace buildin_service
     {
         std::string_view KeepAlive::name() const
         {

@@ -469,7 +469,7 @@ namespace ayan
 
 namespace ayan
 {
-	namespace default_service
+	namespace buildin_service
 	{
 		class KeepAlive : public MetaService<KeepAlive>
 		{

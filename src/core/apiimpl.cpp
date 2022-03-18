@@ -42,11 +42,6 @@ auto _SendPrivateMessage::send_private_msg(Qid id, const Message &msg) -> std::f
 		.get<MsgId>(take_field<MsgId, kmap::msg_id>);
 }
 
-namespace kmap
-{
-	constexpr const char *send_pub_msg = "send_group_msg";
-}
-
 ApiCall &_SendPrivateMessage::send_private_msg(std::tuple<Qid, const Message &> &&params, const ApiRetHook<MsgId> &hook)
 {
 	auto call = as_call(this);
@@ -57,6 +52,11 @@ ApiCall &_SendPrivateMessage::send_private_msg(std::tuple<Qid, const Message &> 
 		.handle<MsgId>(take_field<MsgId, kmap::msg_id>, hook);
 
 	return call->clear_packet();
+}
+
+namespace kmap
+{
+	constexpr const char *send_pub_msg = "send_group_msg";
 }
 
 auto _SendGroupMessage::send_group_msg(Qid id, const Message &msg) -> std::future<MsgId>

@@ -3,9 +3,9 @@
 using namespace ayan;
 using namespace std::chrono_literals;
 
-void pure_api_call_test(BotPtr& bot)
+void raw_api_call_test(BotPtr& bot)
 {
-	auto msg = MsgBuilder::from(L" api-call test").build();
+	auto msg = MsgBuilder::from(L"raw api call test").build();
 
 	bot->active()
 		.action("send_private_msg")
@@ -14,9 +14,9 @@ void pure_api_call_test(BotPtr& bot)
 		.call();
 }
 
-void async_api_get_test(BotPtr& bot)
+void future_api_get_test(BotPtr& bot)
 {
-	auto msg = MsgBuilder::from(L"sync api get").build();
+	auto msg = MsgBuilder::from(L"future api rest: get").build();
 
 	auto unpacker = [](const auto& _)
 	{
@@ -28,11 +28,13 @@ void async_api_get_test(BotPtr& bot)
 		.params("user_id", 2821006329)
 		.params("message", msg.as_json())
 		.get<int>(unpacker);
+
+	std::cout << "future:" << some.get() << std::endl;
 }
 
-void async_api_handle_test(BotPtr& bot)
+void callback_api_handle_test(BotPtr& bot)
 {
-	auto msg = MsgBuilder::from(L"async api handle").build();
+	auto msg = MsgBuilder::from(L"callback api test: handle").build();
 
 	using ComplexType = std::tuple<int, int, std::string>;
 	auto unpacker = [](const json& _) -> ComplexType

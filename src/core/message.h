@@ -1,7 +1,8 @@
 ﻿#pragma once
+
 #include "hv/json.hpp"
 #include "fwd.h"
-
+ 
 #include <variant>
 #include <string>
 
@@ -87,12 +88,10 @@ namespace ayan
     class MsgBuilder
     {
     public:
-        MsgBuilder(const MsgBuilder &) = default;
-        ~MsgBuilder() = default;
-
-    protected:
         MsgBuilder() = default;
+        MsgBuilder(const MsgBuilder &) = default;
         MsgBuilder(const json &raw, std::vector<Segment> &&segs);
+        ~MsgBuilder() = default;
 
     public:
         static MsgBuilder from();
@@ -164,6 +163,16 @@ namespace ayan
                     fn(seg);
                     
             return *this;            
+        }
+
+        template<IsSegment S>
+        bool check_first(const std::function<bool(S&)>& fn)
+        {
+            for (auto &seg : _segs)
+                if (std::holds_alternative<S>(seg))
+                    return fn(std::get<S>(seg));
+            
+            return false;
         }
 
         const json &as_json() const;
