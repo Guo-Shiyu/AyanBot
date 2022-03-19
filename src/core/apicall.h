@@ -108,8 +108,14 @@ namespace ayan
 		BotPtr _bot;
 	};
 
+#ifdef _MSC_VER
+#define FORCE_ESO __declspec(empty_bases)
+#else
+#define FORCE_ESO   
+#endif // _MSC_VER
+
 	template <typename... ApiImpl>
-	class __declspec(empty_bases) ApiImplMixin : private ApiCall, public ApiImpl...
+	class FORCE_ESO ApiImplMixin : private ApiCall, public ApiImpl...
 	{
 	public:
 		ApiImplMixin() = delete;

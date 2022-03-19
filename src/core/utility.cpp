@@ -8,7 +8,7 @@
 
 namespace std
 {
-    ostream &std::operator<<(ostream &os, const u8string &str)
+    ostream &operator<<(ostream &os, const u8string &str)
     {
         os << reinterpret_cast<const char *>(str.data());
         return os;
@@ -84,6 +84,6 @@ namespace ayan
 
     std::string srcinfo(std::source_location &&loc)
     {
-        return std::format("file:{} line: {} fn:{}", loc.file_name(), loc.line(), loc.function_name());
+        return fmt::format("file:{} line: {} fn:{}", loc.file_name(), loc.line(), loc.function_name());
     }
 }

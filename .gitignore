@@ -35,6 +35,7 @@
 .xmake/
 
 # VS
+vs2022/
 .vs/
 .vscode/
 

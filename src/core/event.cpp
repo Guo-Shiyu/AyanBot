@@ -15,10 +15,10 @@ namespace ayan
 		{
 			if (raw.starts_with('f'))
 				return PrivateSubType::Friend;
-			else if (raw.starts_with('g'))
+			else //if (raw.starts_with('g'))
 				return PrivateSubType::Group;
-			else
-				unreachable();
+			// else
+			// 	unreachable();
 		};
 
 		auto parse_sender = [](const json &sender_field) -> PrivateMessageSender

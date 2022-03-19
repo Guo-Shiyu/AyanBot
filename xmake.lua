@@ -6,7 +6,7 @@ AYAN_LUA_INTERFACE = false
 AYAN_PYTHON_INTERFACE = false
 
 -- Python Interpreter Path
-FOREIGN_INTERPRETER_PATH = [[D:\\...\\Anconda]]
+FOREIGN_INTERPRETER_PATH = [[D:\\...\\Anaconda]]
 
 add_rules("mode.debug", "mode.debug")
 
@@ -18,7 +18,11 @@ if AYAN_PYTHON_INTERFACE then
     add_requires("pybind11")
 end
 
+if not is_os("windows") then
+    add_requires("fmt")
+end
 add_requires("libhv", {configs = {openssl = true}})
+
 set_languages("c++latest")
 
 target("AyanBot")
@@ -26,6 +30,12 @@ target("AyanBot")
     add_files("src/*.cpp")
     add_files("src/core/*.cpp")
     add_packages("libhv")
+
+    if not is_os("windows") then
+        add_packages("fmt")
+        set_languages("c++20")
+        add_cxxflags("-fconcept")
+    end
 
     if AYAN_LUA_INTERFACE then
         add_packages("sol2")

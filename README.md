@@ -1,19 +1,19 @@
 # AyanBot
 
-Ayan 是基于 Modern C++ 编写的轻量，异步，易于扩展QQ机器人框架。其底层与实现了 [OneBot-v11](https://github.com/botuniverse/onebot-11) 标准的协议适配器进行交互， 为上层实现需求的开发者提供易于使用的接口。  
+Ayan 是基于 Modern C++ 编写的轻量，异步，易于扩展 QQ机器人 框架。其底层与实现了 [OneBot-v11](https://github.com/botuniverse/onebot-11) 标准的协议适配器进行交互， 为上层实现需求的开发者提供易于使用的接口。  
 
 
 # 设计目标  
 + 易于开发和部署  
     使开发者能专注于功能的实现，使用者能方便地进行功能管理和权限控制， 最终达到任何用户都能灵活便捷地满足个人需求的效果。  
 
-    如果你想快速部署自己的 Bot， 参见 [快速开始]()  
-    如果你想开发个性化的的功能， 参见 [服务样例]()， [接口手册]()
+    如果你想快速部署自己的 Bot， 参见 [快速开始](doc/README.md)  
+    如果你想开发个性化的的功能， 参见 [服务样例](example/README.md)， [接口手册](doc/UserManual.md), [服务开发教程](doc/1-Hello.md)
 
 + 轻量高效    
     无论是开发者还是使用者均不必为他们不需要的部分付出任何额外的心智成本， 或是时间空间上的代价， 一切都是“零开销抽象”的。   
 
-    你可以查看 [开发者文档]() 来了解 Ayan 是如何实现这一目标的。  
+    你可以查看 [开发者文档](doc/dev/README.md) 来了解 Ayan 是如何实现这一目标的。  
 
 # 概览  
 Ayan 中的核心概念包括以下几点：
@@ -24,16 +24,17 @@ Ayan 中的核心概念包括以下几点：
     每个 Bot 持有一条 WebSocket 连接并与对应的与 onebot 协议适配器进行交互， 向上提供 onebot API. 通过订阅 `Env` 中的 `Service` 进行个性化的服务配置。
 
 + `Service`   
-    Service 负责完成各种具体功能， 不同种类的 Service 只会响应自己负责的 `Event`, 彼此不会干扰。 Service 通过实现不同的 [Service Trait]() 来控制自身加载时、响应时、甚至空闲时的行为。 Service 只会加载于 Env 中， 被 Bot 订阅后才会在 Bot 上生效。    
+    Service 负责完成各种具体功能， 不同种类的 Service 只会响应自己负责的 `Event`, 彼此不会干扰。 Service 通过实现不同的 [Service Trait](doc/dev/service_system.md) 来控制自身加载时、响应时、甚至空闲时的行为。 Service 只会加载于 Env 中， 被 Bot 订阅后才会在 Bot 上生效。    
 
-除此之外， 还有一些概念基于已有的 onebot 标准， 例如 [Event](), [Message]()，在 Ayan 中也有同样的封装。
+除此之外， 还有一些概念基于已有的 [onebot](https://github.com/botuniverse/onebot-11) 标准， 例如 Event, Message，在 Ayan 中也有同样的封装。
 
 # 文档  
-文档参见 [Doc]()  
-以及，交流QQ群：933327998   
+文档参见 [Doc](doc/README.md)  
+
+交流QQ群：933327998   
 
 # 特性
-Ayan 的特性来自于其 Design Goal。 开发者和使用者的体验是最为重要的， 轻量高效是其次重要的。  
+开发者和使用者的体验是比轻量高效更加重要的。  
 
 + `Easy-to-use`  
     借助于 Modern C++ 的特性与设计方法， 那些可能被频繁使用的接口都尽量地润色到符合（个人认为）的人体工学。
@@ -113,7 +114,7 @@ Ayan 的特性来自于其 Design Goal。 开发者和使用者的体验是最�
     }
     ~~~ 
     
-    借助于辅助类对 variant 进行模式匹配
+    借助于辅助类对 variant 进行 伪*模式匹配
     ~~~ c++
     {
         using ADT = std::variant<int, size_t, std::string>;
@@ -144,7 +145,8 @@ Ayan 的特性来自于其 Design Goal。 开发者和使用者的体验是最�
     }
     ~~~
 
-    链式 api 调用请见 `异步`
+    链式 api 调用  
+    请见 `异步`
 
 + `异步`   
     Ayan 同时提供了基于 future 和 callback 的异步解决方案。
@@ -187,21 +189,21 @@ Ayan 的特性来自于其 Design Goal。 开发者和使用者的体验是最�
 
         bot.api().send_group_msg({ group, msg }, on_finish)
            .api().send_private_msg({ friend_, msg }, on_finish);
-        // 和 future 异步 api 的区别仅仅是将 api 所需的参数打包成 tuple, 并额外传入一个 callback 参数而已
+        // 和 future 异步 api 的区别仅仅是将 api 所需的参数打包成 tuple, 并额外传入一个 callback 参数
 
         // 当然也可以仅仅是为了使用链式调用而不传入回调参数， 因为 api 提供了什么都不做的默认参数
         bot.api().send_group_msg({ group, msg })
            .api().send_private_msg({ friend_, msg });
         
         // 或是发送消息的同时执行耗时的操作
-        auto on_ret = [](auto& call_result) // 泛型lambda
+        auto on_ret = [](auto& call_result)
         {
             std::ofstream file { "C:\\local\\FriendList.txt" };
             for(auto& fd: call_result)
             {
                 const char* fmt = "id:{} name:{}\n";
                 std::string line = std::format(fmt, fd.user_id, fd.nickname);  
-                file << line;
+                file << line;   // 耗时操作
             }
             file.close();
         }
@@ -215,7 +217,7 @@ Ayan 的特性来自于其 Design Goal。 开发者和使用者的体验是最�
     }
     ~~~ 
 
-    此外， bot修饰了定时器接口：
+    此外， bot 修饰了定时器接口：
     ~~~ cpp
         using namespace hv;
 
@@ -255,71 +257,19 @@ Ayan 的特性来自于其 Design Goal。 开发者和使用者的体验是最�
     + 每开启一个 lua interface (裸解释器) 将升高 约 1mb (随脚本文件功能而变化)   
 
 + `丰富的基础组件`   
-这主要归功于开源网络库 [libhv](https://github.com/ithewei/libhv) 提供的各种基础组件，其次 Ayan 也封装了一些更为常用的工具， 位于 `src/core/utility` 中， 关于如何使用工具， 参见[test/utility]().  
-    + libhv 的 [接口手册](https://blog.csdn.net/GG_SiMiDa/article/details/103976875), [各种使用教程](https://hewei.blog.csdn.net/article/details/113733758?spm=1001.2014.3001.5502)
+这主要归功于开源网络库 [libhv](https://github.com/ithewei/libhv) 提供的各种基础组件，其次 Ayan 也封装了一些更为常用的工具， 位于 `src/core/utility` 中， 关于如何使用工具， 参见 [test/utility]().  
+    + libhv 的 [接口手册](https://blog.csdn.net/GG_SiMiDa/article/details/103976875), [使用教程](https://hewei.blog.csdn.net/article/details/113733758?spm=1001.2014.3001.5502)
 
 + `脚本语言接口`    
     Ayan 提供了两种脚本语言的接口: python & lua, 均默认不开启。
+
     ## python   
-    通过 pybind11 嵌入 python 解释器，支持引入第三方库  
-    1. 修改 xmake.lua 中`AYAN_PYTHON_INTERFACE` 为 `true` 并设置 `FOREIGN_INTERPRETER_PATH` 为本地的解释器路径
-        （通常为 Anaconda 中 python.exe 所在路径， 以方便引入外部库）
-    2. 在任一 Env 中提供此项服务以完成解释器的加载,   bot `无需` 像普通服务一样进行订阅， 即可在任意代码中使用如下接口进行访问
-    ~~~ c++
-        // 某一环境中加载解释器
-        env.supplv<buildin_service::PythonInterface>();
-        
-        // 多次加载也不会出现异常
-        other_env.supplv<buildin_service::PythonInterface>();
-
-        // 即可在任意代码中使用如下语句
-        py::exec(R"(
-            import sys
-            print(sys.platform)
-
-            kwargs = dict(name="World", number=42) 
-            hi = "Hello, {name}! The answer is {number}".format(**kwargs)
-            print(hi)
-        )");
-
-        py::eval_file("script.py");
-    ~~~
-
-    可以通过查询 pybind11 的[文档](https://pybind11.readthedocs.io/_/downloads/en/latest/pdf/)来获得更多用法.  
-    ### 注意： 
-    由此种方法开启的解释器仍然受 GIL 的限制， 因此所有代码中使用的解释器均为同一个全局解释器，且版本与外部解释器路径下的版本相同。   
-    此外还存在以下限制：  
-    1. 在解释器 drop 后（也即任何一个 Env 中都已卸载 PythonInterface 服务后）， c++ 中能不存在任何对 python 对象的引用， 否则会 crush , 请保证对象的生命周期短于解释器的生命周期。
-    2. 在多线程并发争夺 解释器所有权 时， 需要自行加锁， Ayan 本身不保证解释器的线程安全。       
-
+    通过 pybind11 绑定到外部 python 解释器，支持引入 python 外部库  
+    
 
     ## Lua
-    1. 修改 xmake.lua 中 `LUA_INTERFACE` 为 `true`， 即可自动依赖 lua (latest verion)， 若需指定版本（包括 5.4 / 5.3 / luajit等）, 请参照 xmake 文档添加依赖配置.
-
-    2. 在任一代码片段中开启解释器并运行
-    ~~~ c++
-        // 新建解释器
-        sol::state lua;
-
-        // 开启所有内置标准库
-        lua.open_libraries();
-
-        lua.script(R"(
-            require("other_lua_file")
-
-            local x = 137
-            print(x)
-            
-            local tab = {}
-            table.insert(tab, "wuhu", x + 1)
-
-            local welcome = "hello"
-            print(welcome))");
-
-        lua.script_file("script.lua");
-    ~~~ 
-    由于lua的小巧和灵活， 你可以在任意线程中开启任意多个解释器而不会造成内存占用膨胀问题。 
-    更多用法参照 sol3 的[文档](https://sol2.readthedocs.io/en/latest/index.html)， 编写更加灵活的扩展工具。
+    通过 sol3 嵌入 lua 解释器, 支持所有的 lua 标准库.
+    
 
 # Road Map
 + 跨平台

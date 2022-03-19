@@ -39,7 +39,10 @@ namespace ayan
 		else if (type.contains("reply"))
 			return ReplySeg{data["id"].get<MsgId>()};
 		else
-			return unsupported<TextSeg>(type);
+		{
+			unsupported(type);
+			return Segment{};
+		}
 	}
 
 	json SegDumper::dump(const Segment &seg)

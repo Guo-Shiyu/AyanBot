@@ -1,7 +1,79 @@
 ﻿#pragma once
 
+#ifdef _MSC_VER
 #include <source_location>
 #include <format>
+#define fmt  std
+#else
+
+#include <cstdint>
+
+namespace std
+{
+	struct source_location
+	{
+	public:
+#if not defined(__apple_build_version__) and defined(__clang__) and (__clang_major__ >= 9)
+		static constexpr source_location current(const char *fileName = __builtin_FILE(),
+												 const char *functionName = __builtin_FUNCTION(),
+												 const uint_least32_t lineNumber = __builtin_LINE(),
+												 const uint_least32_t columnOffset = __builtin_COLUMN()) noexcept
+#elif defined(__GNUC__) and (__GNUC__ > 4 or (__GNUC__ == 4 and __GNUC_MINOR__ >= 8))
+		static constexpr source_location current(const char *fileName = __builtin_FILE(),
+												 const char *functionName = __builtin_FUNCTION(),
+												 const uint_least32_t lineNumber = __builtin_LINE(),
+												 const uint_least32_t columnOffset = 0) noexcept
+#else
+		static constexpr source_location current(const char *fileName = "unsupported",
+												 const char *functionName = "unsupported",
+												 const uint_least32_t lineNumber = 0,
+												 const uint_least32_t columnOffset = 0) noexcept
+#endif
+		{
+			return source_location(fileName, functionName, lineNumber, columnOffset);
+		}
+
+		source_location(const source_location &) = default;
+		source_location(source_location &&) = default;
+
+		constexpr const char *file_name() const noexcept
+		{
+			return fileName;
+		}
+
+		constexpr const char *function_name() const noexcept
+		{
+			return functionName;
+		}
+
+		constexpr uint_least32_t line() const noexcept
+		{
+			return lineNumber;
+		}
+
+		constexpr std::uint_least32_t column() const noexcept
+		{
+			return columnOffset;
+		}
+
+	private:
+		constexpr source_location(const char *fileName, const char *functionName, const uint_least32_t lineNumber,
+								  const uint_least32_t columnOffset) noexcept
+			: fileName(fileName), functionName(functionName), lineNumber(lineNumber), columnOffset(columnOffset)
+		{
+		}
+
+		const char *fileName;
+		const char *functionName;
+		const std::uint_least32_t lineNumber;
+		const std::uint_least32_t columnOffset;
+	};
+} // namespace std
+
+#include "fmt/core.h"
+
+#endif
+
 #include <exception>
 #include <ios>
 #include <chrono>
@@ -25,18 +97,20 @@ namespace ayan
 
 	std::string_view time_now();
 
-	std::string url_encode(const std::string& utf8);
+	std::string url_encode(const std::string &utf8);
 
 	std::string srcinfo(std::source_location &&_ = std::source_location::current());
 
+	using namespace std::chrono_literals;
+
 	template <class _Rep, class _Period>
-	auto count_ms(const std::chrono::duration<_Rep, _Period>& real_time) 
+	auto count_ms(const std::chrono::duration<_Rep, _Period> &real_time)
 	{
 		return std::chrono::duration_cast<decltype(1ms)>(real_time).count();
 	}
 
 	template <typename... T>
-	int accumulate_ms(T&&... real_time)
+	int accumulate_ms(T &&...real_time)
 	{
 		return ((count_ms(real_time)) + ...);
 	}
@@ -45,22 +119,22 @@ namespace ayan
 	std::string _debug(std::string_view fmt, std::source_location &&loc, Args &&...args)
 	{
 		static const char *debug_fmt = "Ayan-Debug-Info: {0} at: {1}";
-		return std::format(debug_fmt, std::format(fmt, args...), srcinfo(std::forward<std::source_location>(loc)));
+		return fmt::format(debug_fmt, fmt::format(fmt, args...), srcinfo(std::forward<std::source_location>(loc)));
 	}
 
 	template <typename Except>
 	void _exception_report(std::string_view err_name, std::string_view srcinfo, const char *custom_fmt = nullptr)
 	{
-		static const char *report_fmt = "Ayan-Runtime-Error: {0} at: {1}";
-		const char *fmt = custom_fmt == nullptr ? report_fmt : custom_fmt;
-		throw Except(std::format(fmt, err_name, srcinfo));
+		constexpr const char *report_fmt = "Ayan-Runtime-Error: {0} at: {1}";
+		std::string_view fmt = custom_fmt == nullptr ? report_fmt : custom_fmt;
+		throw Except(fmt::format(report_fmt, err_name, srcinfo));
 	}
 
 	template <typename Except>
 	void _exception_polish(std::string_view prog, std::string_view appendix, std::string_view err_what)
 	{
-		static const char *polish_fmt = "{0}\n - {1}: {2}";
-		throw Except(std::format(polish_fmt, err_what, prog, appendix));
+		constexpr static const char *polish_fmt = "{0}\n - {1}: {2}";
+		throw Except(fmt::format(polish_fmt, err_what, prog, appendix));
 	}
 
 	template <typename Except, typename Ret = void>
@@ -71,9 +145,9 @@ namespace ayan
 	}
 
 	template <typename Except, typename Ret = void>
-	Ret err_report(std::string_view name, std::source_location &&_ = std::source_location::current())
+	Ret err_report(std::string_view name, std::source_location&& _ = std::source_location::current())
 	{
-		_exception_report<Except>(name, srcinfo(std::forward<std::source_location>(_)));
+		_exception_report<Except>(name, srcinfo(std::forward<std::source_location>(_)), nullptr);
 		return Ret();
 	}
 
@@ -100,7 +174,8 @@ namespace ayan
 	template <typename R = void>
 	R unsupported(std::string_view feature)
 	{
-		return err_report<std::logic_error, R>(std::format("Unsupported Feature: {}", feature));
+		err_report<std::logic_error, R>(fmt::format("Unsupported Feature: {}", feature));
+		return R();
 	}
 }
 

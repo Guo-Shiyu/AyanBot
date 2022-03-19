@@ -4,6 +4,7 @@
 #include "event.h"
 #include "env.h"
 #include "apiimpl.h"
+#include "utility.h"
 
 #include "hv/WebSocketClient.h"
 
@@ -110,21 +111,21 @@ namespace ayan
 		template <typename... Args>
 		Bot &log(std::string_view fmt, Args &&...args)
 		{
-			*_redinfo.log << _log_impl(info, std::format(fmt, args...));
+			*_redinfo.log << _log_impl(info, std::move(fmt::format(fmt, std::forward<Args>(args)...))) << std::endl;
 			return *this;
 		}
 
 		template <typename... Args>
 		Bot &dbg(std::string_view fmt, Args &&...args)
 		{
-			*_redinfo.dbg << "\033[1;32m" << _log_impl(debug, std::format(fmt, args...)) << "\033[0m";
+			*_redinfo.dbg << "\033[1;32m" << _log_impl(debug, fmt::format(fmt, std::forward<Args>(args)...)) << "\033[0m";
 			return *this;
 		}
 
 		template <typename... Args>
 		Bot &err(std::string_view fmt, Args &&...args)
 		{
-			*_redinfo.err << "\033[1;31m" << _log_impl(error, std::format(fmt, args...)) << "\033[0m";
+			*_redinfo.err << "\033[1;31m" << _log_impl(error, fmt::format(fmt, std::forward<Args>(args)...)) << "\033[0m";
 			return *this;
 		}
 

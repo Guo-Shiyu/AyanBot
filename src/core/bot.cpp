@@ -8,7 +8,7 @@ namespace ayan
 	BotBuilder &BotBuilder::connect(std::string_view &&ip, std::string_view &&port)
 	{
 		/// "ws://127.0.0.1:6700/"
-		_netaddr = std::format("ws://{0}:{1}/", ip, port);
+		_netaddr = fmt::format("ws://{0}:{1}/", ip, port);
 		return *this;
 	}
 
@@ -270,7 +270,7 @@ namespace ayan
 			{
 				err_polish<std::logic_error>(out,
 											 "Event Parser",
-											 std::format("Unsupported Event from packet: {}",
+											 fmt::format("Unsupported Event from packet: {}",
 														 packet.dump()));
 			}
 			catch (const std::exception &e)
@@ -301,7 +301,7 @@ namespace ayan
 			}
 			catch (const std::exception &e)
 			{
-				throw std::runtime_error(std::format("Failed Service '{0}', Error: {1}", sptr->name(), e.what()));
+				throw std::runtime_error(fmt::format("Failed Service '{0}', Error: {1}", sptr->name(), e.what()));
 			}
 			if (not opteve.has_value())
 			{
@@ -330,7 +330,7 @@ namespace ayan
 
 	std::string Bot::_log_impl(const char *level, std::string_view content)
 	{
-		return std::format(log_fmt, time_now(), _self, level, content);
+		return fmt::format(log_fmt, time_now(), _self, level, content);
 	}
 
 	Env &Bot::home()

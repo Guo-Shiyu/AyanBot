@@ -1,44 +1,4 @@
-# Some 
+# Example 
+这一目录下为各种简单服务样例, 与文档中教程系列一一对应.  
 
-多个bot共用一个environment
-
-~~~ cpp
-struct Environment
-{
-    ThreadPool* _tp;
-    std::map<Event>
-}
-~~~
-
-# Expect
-
-
-
-~~~ cpp
-
-using MsgView = const Message&;
-
-template<typename T>
-struct BaseTrigger
-{
-    bool touch(MsgView msg);    
-    
-};
-
-template<typename T>
-using Trigger = BaseTrigger<T>;
-
-struct HelloTrigger : public Trigger<HelloTrigger>
-{
-
-};
-
-
-int main() 
-{
-    auto bot = AyanBot::from<NetAddress>("127.0.0.1", "6700");
-    bot.registe_trigger<HelloTrigger>();
-
-}
-
-~~~
+文件中标记有 unstable 的表示由于 api 尚未稳定而不保证一定生效的样例.

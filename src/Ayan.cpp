@@ -1,7 +1,5 @@
 ﻿#include "Ayan.h"
 
-#include "core/adaptor.h"
-
 using namespace ayan;
 
 int main(int argc, char **argv)

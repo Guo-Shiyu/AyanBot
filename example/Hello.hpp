@@ -14,10 +14,9 @@ public:
 	void on_load(Bot& bot)
 	{
 		std::string_view now = time_now();
-		Message hello = std::string{ now };
-
-		bot.log("Welcome!, now is {0}", now);
+		bot.dbg("Welcome!, now is {0}", now);
 		
+		Message hello = std::string{ now };
 		for (Qid super : bot.admins())
 		{
 			bot.api().send_private_msg(super, hello);
