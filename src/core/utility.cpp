@@ -27,6 +27,24 @@ namespace std
 
 namespace ayan
 {
+    void clear_screen() noexcept
+    {
+#ifdef _WIN32
+        std::system("chcp 65001 & cls");
+#else
+        std::system("clear");
+#endif
+    }
+
+    void block_here() noexcept
+    {
+        using namespace std::literals::chrono_literals;
+        while (true)
+        {
+            std::this_thread::sleep_for(16ms);
+        }
+    }
+
     std::wstring utf8_to_wstr(const std::string &src)
     {
         static std::wstring_convert<std::codecvt_utf8<wchar_t>> converter;
@@ -39,15 +57,6 @@ namespace ayan
         return converter.to_bytes(src);
     }
 
-    void block_here() noexcept
-    {
-        using namespace std::literals::chrono_literals;
-        while (true)
-        {
-            std::this_thread::sleep_for(16ms);
-        }
-    }
-
     std::string_view time_now()
     {
         static char buf[DATETIME_FMT_BUFLEN];
@@ -56,16 +65,16 @@ namespace ayan
         return buf;
     }
 
-    std::string url_encode(const std::string& utf8)
+    std::string url_encode(const std::string &utf8)
     {
         static std::ostringstream escaped;
         escaped.fill('0');
         escaped << std::hex;
 
-        for (auto& c : utf8) 
+        for (auto &c : utf8)
         {
             /// not encoded
-            if (c >= 0 && std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~') 
+            if (c >= 0 && std::isalnum(c) || c == '-' || c == '_' || c == '.' || c == '~')
             {
                 escaped << c;
                 continue;
@@ -73,12 +82,12 @@ namespace ayan
 
             /// other characters are encoded
             escaped << std::uppercase
-                << '%' << std::setw(2) << int((unsigned char)c)
-                << std::nouppercase;
+                    << '%' << std::setw(2) << int((unsigned char)c)
+                    << std::nouppercase;
         }
 
         std::string ret = escaped.str();
-        escaped.str("");    /// clear stream
+        escaped.str(""); /// clear stream
         return ret;
     }
 

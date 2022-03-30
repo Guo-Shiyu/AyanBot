@@ -89,6 +89,8 @@ namespace std
 
 namespace ayan
 {
+	void clear_screen() noexcept;
+
 	void block_here() noexcept;
 
 	std::wstring utf8_to_wstr(const std::string &src);
@@ -127,14 +129,16 @@ namespace ayan
 	{
 		constexpr const char *report_fmt = "Ayan-Runtime-Error: {0} at: {1}";
 		std::string_view fmt = custom_fmt == nullptr ? report_fmt : custom_fmt;
-		throw Except(fmt::format(report_fmt, err_name, srcinfo));
+		std::string info = fmt::format(report_fmt, err_name, srcinfo);
+		throw Except(info);
 	}
 
 	template <typename Except>
 	void _exception_polish(std::string_view prog, std::string_view appendix, std::string_view err_what)
 	{
 		constexpr static const char *polish_fmt = "{0}\n - {1}: {2}";
-		throw Except(fmt::format(polish_fmt, err_what, prog, appendix));
+		std::string info = fmt::format(polish_fmt, err_what, prog, appendix);
+		throw Except(info);
 	}
 
 	template <typename Except, typename Ret = void>

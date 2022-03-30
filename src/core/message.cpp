@@ -1,6 +1,10 @@
 ﻿#include "utility.h"
 #include "message.h"
 
+#ifndef __cpp_lib_string_contains 
+#define contains(field) find(field) != std::string::npos
+#endif
+
 namespace ayan
 {
 	Segment SegParser::parse(const json &seg)

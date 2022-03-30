@@ -4,7 +4,7 @@ using namespace ayan;
 
 int main(int argc, char **argv)
 {
-	std::system("chcp 65001 & cls");     
+	clear_screen();
 
 	auto env = Env::from()
 				   .with_name("Global")
