@@ -1,6 +1,6 @@
 # AyanBot
 
-Ayan 是基于 Modern C++ 编写的轻量，异步，易于扩展 QQ机器人 框架。其底层与实现了 [OneBot-v11](https://github.com/botuniverse/onebot-11) 标准的协议适配器进行交互， 为上层实现需求的开发者提供易于使用的接口。  
+Ayan 是基于 Modern C++ 编写的轻量，异步，易于扩展的跨平台 QQ机器人 框架。其底层与实现了 [OneBot-v11](https://github.com/botuniverse/onebot-11) 标准的协议适配器进行交互， 为上层实现需求的开发者提供易于使用的接口。  
 
 
 # 设计目标  
@@ -34,7 +34,6 @@ Ayan 中的核心概念包括以下几点：
 交流QQ群：933327998   
 
 # 特性
-开发者和使用者的体验是比轻量高效更加重要的。  
 
 + `Easy-to-use`  
     借助于 Modern C++ 的特性与设计方法， 那些可能被频繁使用的接口都尽量地润色到符合（个人认为）的人体工学。
@@ -261,18 +260,17 @@ Ayan 中的核心概念包括以下几点：
     + libhv 的 [接口手册](https://blog.csdn.net/GG_SiMiDa/article/details/103976875), [使用教程](https://hewei.blog.csdn.net/article/details/113733758?spm=1001.2014.3001.5502)
 
 + `脚本语言接口`    
-    Ayan 提供了两种脚本语言的接口: python & lua, 均默认不开启。
+    Ayan 提供了两种脚本语言的接口: python & lua, 均默认不开启。   
+    参见 [开启脚本语言接口](doc/README.md/#开启脚本语言接口)
 
     ## python   
-    通过 pybind11 绑定到外部 python 解释器，支持引入 python 外部库  
+    通过 pybind11 绑定到外部 python 解释器，支持引入 python 外部库 
     
-
     ## Lua
     通过 sol3 嵌入 lua 解释器, 支持所有的 lua 标准库.
     
 
 # Road Map
-+ 跨平台
 + Lua Extension API
 + 更加完善的文档及测试用例
 + Service Market
@@ -283,6 +281,6 @@ Ayan 中的核心概念包括以下几点：
 A:  QQ机器人实现任何功能都需要对包括消息在内的各种事件无一遗漏地进行检查并作出反应，与“察言观色”这一成语语义相合。 同时，“阿言” 是一位我很喜欢的动漫角色的昵称， 其绝技名也恰好为 “察言观色”. 因此借人物昵称命名机器人框架为阿言。 
 
 + `Q: 为什么不向脚本语言中注册 ayan 的接口来使用脚本语言开发服务？`  
-A: 设计上， Python 接口用于引入 python 社区中丰富的第三方库， 以完成各种 “未曾设想的功能”而非处理消息回复等逻辑， 因此并未向其中注册 Ayan 的 api 来进行扩展。 如果你想全部使用 python 来完成服务开发，  [nonebot2](https://github.com/nonebot/nonebot2) 是一个更好的选择.  
-而 Lua 接口则是专门为了解决编译型语言的不够灵活， 服务开发不够快速敏捷等问题而引入的， 但现阶段 lua extension api 的形式尚未确定, 后续才会完善。
+A: 设计上， Python 接口用于引入 python 社区中丰富的第三方库， 以完成各种 “未曾设想的功能”而非处理消息回复等逻辑， 因此并未向其中注册 Ayan 的 api 来进行扩展。 如果你想全部使用 python 来完成服务开发， [nonebot2](https://github.com/nonebot/nonebot2) 是更好的选择.   
+而 Lua 接口则是专门为了解决编译型语言的不够灵活， 服务开发不够快速敏捷等问题而引入的， 但现阶段 lua extension api 的形式尚未确定, 后续将会完善并开放。
 
