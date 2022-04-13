@@ -74,11 +74,12 @@ Ayan 本身不负责模拟 QQ 客户端对 raw UDP packet 拆包， 而是由协
     + servers: - ws: port   
     此项为你需要使用的端口号    
 
-5. 拷贝 example 目录下 Hello.hpp 到 src/service 下， 并修改 Ayan.h 文件， 在文件末尾添加：
+5. 拷贝 example 目录下 Hello.hpp 到 src/service 下， 并修改 src/service/include.h 文件， 在文件末尾添加：
 ~~~ c++
-    #include "service/Hello.hpp" 
+    #include "Hello.hpp" 
 ~~~ 
-修改 Ayan.cpp, 其中注释了 diff 字样的语句为新加入/修改的语句：
+
+6. 修改 Ayan.cpp, 其中注释了 diff 字样的语句为新加入/修改的语句：
 
 ~~~ c++
 #include "Ayan.h"
@@ -108,7 +109,7 @@ int main(int argc, char **argv)
 	return 0;
 }
 ~~~
-注意， diff-1 表明注册并自动为机器人订阅该服务, diff-2 处的 ip, port 字段即为刚刚 协议适配器 正向ws 所监听的地址和端口号。
+注意， diff-1 表明注册并自动为 env 中所有机器人订阅该服务, diff-2 处的 ip, port 字段即为刚刚 协议适配器 正向ws 所监听的地址和端口号。
 
 6. 启动 go-cqhttp, 使用以下语句重新编译和启动 Ayan 
 
