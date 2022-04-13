@@ -88,25 +88,25 @@ using namespace ayan;
 
 int main(int argc, char **argv)
 {
-	std::system("chcp 65001 & cls");     
+    std::system("chcp 65001 & cls");     
 
-	auto env = Env::from()
-		.with_name("Global")
-		.with_thread_num(1)
-		.init();
+    auto env = Env::from()
+        .with_name("Global")
+        .with_thread_num(1)
+        .init();
 
     // diff-1
     env->supply<HelloService, true>();
 
-	auto bot = Bot::from(env)
-		.connect("127.0.0.1", "6700")    // diff-2
-		.with_name("Ayan")
-		.init();
+    auto bot = Bot::from(env)
+        .connect("127.0.0.1", "6700")    // diff-2
+        .with_name("Ayan")
+        .init();
 
-	bot->start();
+    bot->start();
 
-	block_here();
-	return 0;
+    block_here();
+    return 0;
 }
 ~~~
 注意， diff-1 表明注册并自动为 env 中所有机器人订阅该服务, diff-2 处的 ip, port 字段即为刚刚 协议适配器 正向ws 所监听的地址和端口号。
@@ -125,6 +125,8 @@ int main(int argc, char **argv)
 ~~~
 
 此时 Ayan 启动完毕且服务加载成功。
+
+你可以将 example 目录下的文件复制到 src/service 目录下， 并在 src/service/include.h 中 将其 include 进项目， 即可在 Ayan.cpp 中使用样例程序。
 
 其他服务的示例请参见 [example](../example/README.md)   
 开发定制化的服务请参见 [UserManual.md](UserManual.md) 以及 [1-Hello.md](1-Hello.md)
