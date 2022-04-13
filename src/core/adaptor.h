@@ -27,7 +27,7 @@ namespace ayan
     }
 
     template <typename EventType>
-    [[unstable]] struct ServiceAdaptor
+    struct ServiceAdaptor
     {
         using OptTrigStage = std::function<bool(Bot &, EventType &)>;
         using OptActStage = std::function<void(Bot &, EventType &)>;
@@ -37,7 +37,7 @@ namespace ayan
     };
 
     template <typename T, void (*OnInit)(), void (*OnDrop)()>
-    [[unstable]] struct _RefCounterGuard
+    struct _RefCounterGuard
     {
         static inline std::atomic_int objects_alive = 0;
 

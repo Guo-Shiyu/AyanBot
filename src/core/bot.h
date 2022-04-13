@@ -12,6 +12,7 @@
 
 namespace ayan
 {
+	// ApiWarpper declare placeholder
 	struct _
 	{
 	};
@@ -31,7 +32,7 @@ namespace ayan
 
 	public:
 		BotBuilder &connect(std::string_view &&ip, std::string_view &&port);
-		BotBuilder &connect(std::string_view &&url);
+		BotBuilder &connect(std::string_view &&url);	// "ws://127.0.0.1:6700/"
 		BotBuilder &with_name(const std::string &qid);
 		BotBuilder &redirect_log(std::ostream *log);
 		BotBuilder &redirect_err(std::ostream *err);
@@ -100,32 +101,32 @@ namespace ayan
 		Bot &set_hook(int ecode, std::function<void(const json &)> &&hook, unsigned timeout_ms = MaxHookTime);
 
 	private:
-		static constexpr const char log_fmt[] = "[{0}] [{1}] [{2}]: {3}\n";
-		static constexpr const char
-			info[] = "INFO",
-			debug[] = "DEBUG",
-			error[] = "ERROR";
+		static constexpr const char LOG_FMT[] = "[{0}] [{1}] [{2}]: {3}\n";
 		std::string _log_impl(const char *level, std::string_view content);
 
 	public:
 		template <typename... Args>
 		Bot &log(std::string_view fmt, Args &&...args)
 		{
-			*_redinfo.log << _log_impl(info, std::move(fmt::format(fmt, std::forward<Args>(args)...))) << std::endl;
+			*_redinfo.log << _log_impl("INFO", std::move(fmt::format(fmt, std::forward<Args>(args)...))) << std::endl;
 			return *this;
 		}
 
 		template <typename... Args>
 		Bot &dbg(std::string_view fmt, Args &&...args)
 		{
-			*_redinfo.dbg << "\033[1;32m" << _log_impl(debug, fmt::format(fmt, std::forward<Args>(args)...)) << "\033[0m";
+			*_redinfo.dbg << "\033[1;32m" // green
+						  << _log_impl("DEBUG", fmt::format(fmt, std::forward<Args>(args)...))
+						  << "\033[0m";
 			return *this;
 		}
 
 		template <typename... Args>
 		Bot &err(std::string_view fmt, Args &&...args)
 		{
-			*_redinfo.err << "\033[1;31m" << _log_impl(error, fmt::format(fmt, std::forward<Args>(args)...)) << "\033[0m";
+			*_redinfo.err << "\033[1;31m" // red
+						  << _log_impl("ERROR", fmt::format(fmt, std::forward<Args>(args)...))
+						  << "\033[0m";
 			return *this;
 		}
 

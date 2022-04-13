@@ -293,7 +293,7 @@ namespace kmap
 	constexpr const char *set_friend_add_request = "set_friend_add_request";
 }
 
-auto _SetFriendAddRequest::set_friend_add_request(const std::string &&flag, bool approve, const std::string &remark) -> std::future<void>
+auto _SetFriendAddRequest::set_friend_add_request(const std::string &flag, bool approve, const std::string &remark) -> std::future<void>
 {
 	auto call = as_call(this)
 					->action(kmap::set_friend_add_request)

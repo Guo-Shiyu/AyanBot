@@ -3,20 +3,44 @@
 #include "../core/service.h"
 #include "../core/apicall.h"
 
-/*
- *  unstable example
- *
- *  do not use these classes
- */
-
 struct MsgAndReqService : public MixinService<MessageService<MsgAndReqService>, RequestService<MsgAndReqService>>
 {
-    virtual ~MsgAndReqService() = default;
+    ~MsgAndReqService() = default;
 
     std::string_view name() const override
     {
-        return "msg and req service test";
+        return "msg and req service";
     }
+
+	bool trig(Bot& bot, RequestEvent& req)
+	{
+		return false;
+	}
+
+	void act(Bot& bot, RequestEvent& req)
+	{
+
+	}
+
+	bool trig(Bot& bot, PrivateMessage& pri)
+	{
+		return false;
+	}
+
+	void act(Bot& bot, PrivateMessage& pri)
+	{
+
+	}
+
+	bool trig(Bot& bot, GroupMessage& gro)
+	{
+		return false;
+	}
+
+	void act(Bot& bot, GroupMessage& gro)
+	{
+
+	}
 };
 
 struct MsgAndMetaService : public MixinService<MessageService<MsgAndMetaService>, RequestService<MsgAndMetaService>>
@@ -27,7 +51,7 @@ struct MsgAndMetaService : public MixinService<MessageService<MsgAndMetaService>
     {
         if constexpr (std::is_base_of<ServiceBase<MsgAndMetaService>, MsgAndMetaService>())
         {
-            int x = 0;
+            std::exit(137);
         }
         return "msg and meta service test";
     }

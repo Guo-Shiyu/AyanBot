@@ -140,7 +140,7 @@ API_DECLARE(
 
 AYAN_API(_SetFriendAddRequest)
 API_DECLARE(
-	[[unstable]] auto set_friend_add_request(const std::string &&flag, bool approve, const std::string &remark = "")->std::future<void>;
+	[[unstable]] auto set_friend_add_request(const std::string &flag, bool approve, const std::string &remark = "")->std::future<void>;
 
 	[[unstable]] ApiCall & set_friend_add_request(std::tuple<const std::string &, bool, const std::string &> && params);)
 

@@ -1,10 +1,14 @@
 ﻿#pragma once
 
 #ifdef _MSC_VER
+
 #include <source_location>
 #include <format>
 #define fmt  std
+
 #else
+
+#include "fmt/core.h"
 
 #include <cstdint>
 
@@ -69,8 +73,6 @@ namespace std
 		const std::uint_least32_t columnOffset;
 	};
 } // namespace std
-
-#include "fmt/core.h"
 
 #endif
 

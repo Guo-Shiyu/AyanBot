@@ -67,14 +67,16 @@ Ayan 本身不负责模拟 QQ 客户端对 raw UDP packet 拆包， 而是由协
 3. 编辑配置文件根据注释提示填写中如下字段：
     + account:uin， account:password   
     你想要挂载的机器人的账号和密码   
+    
     + message:post-format  
     修改此项的值为 array   
+
     + servers: - ws: port   
     此项为你需要使用的端口号    
 
-5. 拷贝 example 目录下 HelloService.hpp 到 src/service 下， 并修改 Ayan.h 文件， 在文件末尾添加：
+5. 拷贝 example 目录下 Hello.hpp 到 src/service 下， 并修改 Ayan.h 文件， 在文件末尾添加：
 ~~~ c++
-    #include "service/HelloService.hpp" 
+    #include "service/Hello.hpp" 
 ~~~ 
 修改 Ayan.cpp, 其中注释了 diff 字样的语句为新加入/修改的语句：
 
@@ -88,17 +90,17 @@ int main(int argc, char **argv)
 	std::system("chcp 65001 & cls");     
 
 	auto env = Env::from()
-				   .with_name("Global")
-				   .with_thread_num(1)
-				   .init();
+		.with_name("Global")
+		.with_thread_num(1)
+		.init();
 
     // diff-1
     env->supply<HelloService, true>();
 
 	auto bot = Bot::from(env)
-				   .connect("127.0.0.1", "6700")    // diff-2
-				   .with_name("Ayan")
-				   .init();
+		.connect("127.0.0.1", "6700")    // diff-2
+		.with_name("Ayan")
+		.init();
 
 	bot->start();
 
@@ -106,7 +108,7 @@ int main(int argc, char **argv)
 	return 0;
 }
 ~~~
-注意， diff-1 表明注册并为机器人订阅该服务, diff-2 处的 ip, port 字段即为刚刚 协议适配器 正向ws 所监听的地址和端口号。
+注意， diff-1 表明注册并自动为机器人订阅该服务, diff-2 处的 ip, port 字段即为刚刚 协议适配器 正向ws 所监听的地址和端口号。
 
 6. 启动 go-cqhttp, 使用以下语句重新编译和启动 Ayan 
 
@@ -157,7 +159,7 @@ int main(int argc, char **argv)
     ### 注意： 
     由此种方法开启的解释器仍然受 GIL 的限制， 因此所有代码中使用的解释器均为同一个全局解释器，且版本与外部解释器路径下的版本相同。   
     此外还存在以下限制：  
-    1. 在解释器 drop 后（也即任何一个 Env 中都已卸载 PythonInterface 服务后）， c++ 中能不存在任何对 python 对象的引用， 否则会 crush , 请保证对象的生命周期短于解释器的生命周期。
+    1. 在解释器 drop 后（也即任何一个 Env 中都已卸载 Python Interface 服务后）， c++ 中能不存在任何对 python 对象的引用， 否则会 crush , 请保证对象的生命周期短于解释器的生命周期。
     2. 在多线程并发争夺 解释器所有权 时， 需要自行加锁， Ayan 本身不保证解释器的线程安全。       
 
 
@@ -171,7 +173,7 @@ int main(int argc, char **argv)
 
         // 开启所有内置标准库
         lua.open_libraries();
-
+        
         lua.script(R"(
             require("other_lua_file")
 

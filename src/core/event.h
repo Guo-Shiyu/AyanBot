@@ -136,7 +136,7 @@ namespace ayan
 
     struct GroupMsgRecall
     {
-        Qid group_id, operator_id;
+        Qid group_id, operator_id;  // 群号， 操作者qq号
         MsgId msg_id;
     };
 
@@ -149,35 +149,35 @@ namespace ayan
     struct GroupMemberJoin
     {
         JoinType type;
-        Qid group_id, operator_id, user_id;
+        Qid group_id, operator_id, user_id; // 群号， 同意该请求的管理员qq号， 新用户qq号
     };
 
     enum class LeaveType
     {
-        Leave,
-        Kick,
-        Kick_me,
+        Leave,      // 主动退群
+        Kick,       // 被踢
+        Kick_me,    // 机器人自身被踢
     };
 
     struct GroupMemberLeave
     {
         LeaveType type;
-        Qid group_id, operator_id, user_id;
+        Qid group_id, operator_id, user_id; // 群号， 踢人操作者的qq号， 被踢/离开的qq号
     };
 
     struct GroupPoke
     {
-        Qid group_id, user_id, target_id;
+        Qid group_id, user_id, target_id; // 群号， 发起者， 被戳者
     };
 
     struct FriendPoke
     {
-        Qid sender_id;
+        Qid sender_id;  // 发起者
     };
 
     struct GroupLuckyKing
     {
-        Qid group_id, user_id, king_id;
+        Qid group_id, user_id, king_id; // 群号， 发红包的人， 幸运王
     };
 
     struct NoticeEventParser

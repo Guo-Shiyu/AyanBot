@@ -93,8 +93,7 @@ namespace ayan
 			}
 			catch (const std::exception &e)
 			{
-				std::string err_info = e.what();
-				this->err("on message: {}", err_info);
+				this->err("on message error: {}", e.what());
 			}
 		};
 		_conn.open(_netaddr.c_str());
@@ -102,11 +101,12 @@ namespace ayan
 		std::string_view netaddr = _netaddr;
 		netaddr.remove_prefix(5); // "ws://"
 		netaddr.remove_suffix(1); // "/"
-		log("connected to server: {}", netaddr);
+		log("connecting to server: {}", netaddr);
 
 		// busy-wait for websocket channel to connect
 		while (not _conn.channel->isConnected())
 			std::this_thread::yield();
+		log("Connection established successfully");
 
 		log("installing service...");
 		_home->registry(shared_from_this());
@@ -330,7 +330,7 @@ namespace ayan
 
 	std::string Bot::_log_impl(const char *level, std::string_view content)
 	{
-		return fmt::format(log_fmt, time_now(), _self, level, content);
+		return fmt::format(LOG_FMT, time_now(), _self, level, content);
 	}
 
 	Env &Bot::home()
