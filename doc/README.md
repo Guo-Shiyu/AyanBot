@@ -20,31 +20,33 @@
 # Build 
 Ayan 使用 [xmake](https://github.com/xmake-io/xmake) 构建，以达到跨平台快速构建的目的。
 
-任意平台下：  
-1. 安装 xmake  
-    可以从 [这里](https://xmake.io/#/guide/installation) 找到安装 xmake 的办法
+## 环境准备
+1. 要求编译器支持 C++ 20 标准   
+下面列出的版本为已经验证过的可用版本， 不保证是对应编译器的最低可用版本  
+    + MSVC 17.0 (VS2022) 
+    + Clang 10.0.0
+    + GCC unknown
+2. 安装 xmake  
+可以从 [这里](https://xmake.io/#/guide/installation) 找到安装 xmake 的办法
 
-2. clone 本项目后， 进入目录， 执行 xmake 命令， 
+3. 安装任意的 onebot 协议适配器，并要求其开启正向 WebSocket 服务， 例如：
+
+    + [go-cqhttp ](https://github.com/Mrs4s/go-cqhttp)  
+    基于 Go 的跨平台 onebot 实现， 支持 onebot11  
+    + [Walle-core](https://github.com/abrahum/Walle-core)   
+    基于 Rust 的跨平台（存疑） onebot 实现， 支持 onebot11/12     
+     
+    你也可以参照 
+
+## 编译  
+1. clone 本项目后， 进入目录， 执行 xmake 命令， 将会生成 build 文件夹以及编译产物。
 ~~~
     $ git clone https://github.com/SilverCicada/AyanBot.git 
     $ cd AyanBot 
     $ xmake 
 ~~~
 
-在这个过程中会xmake自动寻找并安装依赖。
-
-3. 若需要生成特定工程项目, 使用:
-
-~~~
-    Visual Studio:
-    $ xmake project -k vsxmake
-    
-    makefile:
-    $ xmake project -k makefile
-~~~
-
-
-4. 编译成功后, 参照后续方法开启运行 HelloService.
+在这个过程中会xmake自动寻找并安装依赖。  
 
 注意：xmake 默认不使用代理进行下载， 若安装依赖时间过长或出现网络连接失败需要手动下载， 请通过以下命令配置代理 
 ~~~
@@ -56,25 +58,34 @@ Ayan 使用 [xmake](https://github.com/xmake-io/xmake) 构建，以达到跨平�
                                  - xmake g --proxy='socks5://host:port'
 ~~~
 
+3. 若需要生成特定工程项目, 使用:
+
+~~~
+    Visual Studio:
+    $ xmake project -k vsxmake
+    
+    makefile:
+    $ xmake project -k makefile
+
+    或者参阅其官方文档生成 CMake 项目
+~~~
+
+
+4. 编译成功后, 输入以下命令运行项目， 出现以下字样， 说明编译成功。
+~~~
+[20xx-xx-xx hh:mm:ss] [Ayan] [INFO]: connecting to server: <ip>:<port>
+~~~
+
+5. 参照后续方法运行 HelloService.
+
 # Run Hello Service
 Ayan 本身不负责模拟 QQ 客户端对 raw UDP packet 拆包， 而是由协议适配器完成这项工作。 Ayan 只与协议适配器进行通信， 在此基础上实现消息处理逻辑。
 
-1. 下载某个 Onebot 协议适配器， 这里以 go-cqhttp 为例：
-到 [go-cqhttp release](https://github.com/Mrs4s/go-cqhttp/releases) 中下载所在平台对应的版本。
+1. 开启某个 Onebot 协议适配器， 获取正向 WebSocket 服务的监听地址和端口号。  
+建议使用搜索引擎获取 go-cqhttp 的使用方法， 或者见本文末尾的潦草教程。
 
-2. 运行go-cqhttp一次, 生成启动脚本 go-cqhttp.bat， 再通过启动脚本运行一次， 启用功能部分选择 `正向 WebSocket`, 此时将生成配置文件 config.yaml。
+2. 拷贝 example 目录下 Hello.hpp 到 src/service 下， 并修改 src/service/include.h 文件， 在文件末尾添加：
 
-3. 编辑配置文件根据注释提示填写中如下字段：
-    + account:uin， account:password   
-    你想要挂载的机器人的账号和密码   
-    
-    + message:post-format  
-    修改此项的值为 array   
-
-    + servers: - ws: port   
-    此项为你需要使用的端口号    
-
-5. 拷贝 example 目录下 Hello.hpp 到 src/service 下， 并修改 src/service/include.h 文件， 在文件末尾添加：
 ~~~ c++
     #include "Hello.hpp" 
 ~~~ 
@@ -82,36 +93,35 @@ Ayan 本身不负责模拟 QQ 客户端对 raw UDP packet 拆包， 而是由协
 6. 修改 Ayan.cpp, 其中注释了 diff 字样的语句为新加入/修改的语句：
 
 ~~~ c++
-#include "Ayan.h"
+    #include "Ayan.h"
 
-using namespace ayan;
+    using namespace ayan;
 
-int main(int argc, char **argv)
-{
-    std::system("chcp 65001 & cls");     
+    int main(int argc, char **argv)
+    {
+        std::system("chcp 65001 & cls");     
 
-    auto env = Env::from()
-        .with_name("Global")
-        .with_thread_num(1)
-        .init();
+        auto env = Env::from()
+            .with_name("Global")
+            .with_thread_num(1)
+            .init();
 
-    // diff-1
-    env->supply<HelloService, true>();
+        env->supply<HelloService, true>();   // diff-1
 
-    auto bot = Bot::from(env)
-        .connect("127.0.0.1", "6700")    // diff-2
-        .with_name("Ayan")
-        .init();
+        auto bot = Bot::from(env)
+            .connect("127.0.0.1", "6700")    // diff-2
+            .with_name("Ayan")
+            .init();
 
-    bot->start();
+        bot->start();
 
-    block_here();
-    return 0;
-}
+        block_here();
+        return 0;
+    }
 ~~~
 注意， diff-1 表明注册并自动为 env 中所有机器人订阅该服务, diff-2 处的 ip, port 字段即为刚刚 协议适配器 正向ws 所监听的地址和端口号。
 
-6. 启动 go-cqhttp, 使用以下语句重新编译和启动 Ayan 
+6. 启动 go-cqhttp, 并使用以下语句重新编译和启动 Ayan 
 
 ~~~
     $ xmake 
@@ -121,12 +131,12 @@ int main(int argc, char **argv)
 你将会在 Ayan 的控制台中看到如下绿色字样
 
 ~~~
-    [20xx-xx-xx hh-mm-ss] [Ayan] [DEBUG]: Welcome!, now is ...
+    [20xx-xx-xx hh-mm-ss] [Ayan] [DEBUG]: Welcome!, now is <current time>
 ~~~
 
 此时 Ayan 启动完毕且服务加载成功。
 
-你可以将 example 目录下的文件复制到 src/service 目录下， 并在 src/service/include.h 中 将其 include 进项目， 即可在 Ayan.cpp 中使用样例程序。
+你可以将 example 目录下的文件复制到 src/service 目录下， 并在 src/service/include.h 中添加对应的 include 语句， 即可在 Ayan.cpp 订阅并使用 example 代码提供的服务。
 
 其他服务的示例请参见 [example](../example/README.md)   
 开发定制化的服务请参见 [UserManual.md](UserManual.md) 以及 [1-Hello.md](1-Hello.md)
@@ -193,3 +203,23 @@ int main(int argc, char **argv)
     ~~~ 
     由于lua的小巧和灵活， 你可以在任意线程中开启任意多个解释器而不会造成内存占用膨胀问题。   
     更多用法参照 sol3 的[文档](https://sol2.readthedocs.io/en/latest/index.html)， 编写更加灵活的扩展工具。
+
+
+# 附录： go-cqhttp 的安装和使用  
+
+1. 到 [go-cqhttp release](https://github.com/Mrs4s/go-cqhttp/releases) 中下载所在平台对应的版本。
+
+2. 运行go-cqhttp一次, 生成启动脚本 go-cqhttp.bat， 再通过启动脚本运行一次， 启用功能部分选择 `正向 WebSocket`, 此时将生成配置文件 `config.yaml`
+
+3. 编辑配置文件, 根据注释提示填写中如下字段：
+    + account : uin   
+     account : password   
+    对应你想要挂载的机器人的账号和密码（可为空）   
+    
+    + message : post-format  
+    修改此项的值为 array， 表明使用 onebot 11 标准中 消息段 格式传递消息  
+
+    + servers : ws : port   
+    此项为你需要使用的本地端口号    
+
+4. 使用 bat 重启 go-cqhttp, 扫码登陆，出现登陆成功日志即可    
