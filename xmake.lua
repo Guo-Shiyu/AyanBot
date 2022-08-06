@@ -1,54 +1,74 @@
+AyanConfig = {
 
--- enable Ayan Lua Interface
-AYAN_LUA_INTERFACE = false
+    Compilation = {
+        -- "fastest" | "smallest"
+        -- only take effect in release mode
+        Optimize = "fastest",   
+        
+        -- "gcc" | "clang" | "msvc" | "default"
+        ToolChain = "clang",
+    },
 
--- enable Ayan Python Interface
-AYAN_PYTHON_INTERFACE = false
+    Extensions = {
 
--- Python Interpreter Path
-FOREIGN_INTERPRETER_PATH = [[D:\\...\\Anaconda]]
+        -- Python = {
+        --     InterpreterPath = "<example path>",
+        -- },
+
+        -- Lua = {
+            
+        -- }
+    }
+}
 
 add_rules("mode.debug", "mode.debug")
 
-if AYAN_LUA_INTERFACE then
-    add_requires("sol2")
-end
+set_languages("cxx20")
 
-if AYAN_PYTHON_INTERFACE then
-    add_requires("pybind11")
-end
+-- switch toolchain 
+if AyanConfig.Compilation.ToolChain ~= "default" then
+    set_toolchains(AyanConfig.Compilation.ToolChain)
+end 
 
-if not is_os("windows") then
-    add_requires("fmt")
-end
-add_requires("libhv", {configs = {openssl = true}})
+-- parallel compile
+set_policy("build.across_targets_in_parallel", true)
 
-set_languages("c++latest")
+-- enable compile warning 
+set_policy("build.warning", true)
+set_warnings("all", "extra")
 
-target("AyanBot")
-    set_kind("binary")
+
+-- optimization setting and debug info 
+if is_mode("debug") then
+    set_symbols("debug")
+elseif is_mode("release") then
+    set_optimize("fastest")
+    set_policy("build.optimization.lto", true)
+    set_strip("all")
+end 
+
+add_includedirs("include", {public = true})
+
+includes(
+    "dep", 
+    "test"
+)
+
+if AyanConfig.Extensions.Python then 
+    print("using python extension")
+end 
+
+-- libayan / ayan.lib 
+target("ayan")
+    set_kind("static")
     add_files("src/*.cpp")
-    add_files("src/core/*.cpp")
-    add_packages("libhv")
+    remove_files("src/main.cpp")
 
-    if not is_os("windows") then
-        add_packages("fmt")
-        set_languages("c++20")
-        add_cxxflags("-fconcept")
-    end
-
-    if AYAN_LUA_INTERFACE then
-        add_packages("sol2")
-        add_defines("LUA_INTERFACE")
-    end
-
-    if (AYAN_PYTHON_INTERFACE) then 
-        add_packages("pybind11")
-        add_defines("PYTHON_INTERFACE")
-        add_defines("INTERPRETER_PATH=\"".. FOREIGN_INTERPRETER_PATH .. "\"")
-    end
-
-    
+-- HelloAyan.exe 
+target("HelloAyan")
+    set_kind("binary")
+    add_deps("ayan")
+    add_files("src/main.cpp")
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

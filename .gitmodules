@@ -1,0 +1,24 @@
+[submodule "dep/libhv"]
+	path = dep/libhv
+	url = https://github.com/ithewei/libhv.git
+[submodule "dep/fmt"]
+	path = dep/fmt
+	url = https://github.com/fmtlib/fmt.git
+[submodule "dep/source_location"]
+	path = dep/source_location
+	url = https://github.com/paweldac/source_location.git
+[submodule "dep/optional"]
+	path = dep/optional
+	url = https://github.com/TartanLlama/optional.git
+[submodule "dep/result"]
+	path = dep/result
+	url = https://github.com/bitwizeshift/result.git
+[submodule "dep/sol"]
+	path = dep/sol
+	url = https://github.com/ThePhD/sol2.git
+[submodule "dep/pybind11"]
+	path = dep/pybind11
+	url = https://github.com/pybind/pybind11.git
+[submodule "dep/gtest"]
+	path = dep/gtest
+	url = https://github.com/google/googletest.git
