@@ -6,7 +6,7 @@ AyanConfig = {
         Optimize = "fastest",   
         
         -- "gcc" | "clang" | "msvc" | "default"
-        ToolChain = "clang",
+        ToolChain = "default",
     },
 
     Extensions = {
