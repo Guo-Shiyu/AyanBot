@@ -3,11 +3,16 @@
 using namespace ayan;
 
 #include <iostream>
+#include <cuchar>
+
 
 int main(int argc, char **argv)
 {
-	util::clear_screen();	
+	util::clear_screen();
+
+	auto u32str = "这是中文"u32;
 	std::cout << "hello, Ayan!" << std::endl;
+	std::cout << (char*)u32str.data() << std::endl;
 
 	// auto env = Env::from()
 	// 			   .with_name("Global")
@@ -21,6 +26,6 @@ int main(int argc, char **argv)
 
 	// bot->start();
 
-	util::block_here(); 
+	util::block_here();
 	return 0;
 }
