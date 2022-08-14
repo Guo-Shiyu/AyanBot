@@ -23,17 +23,4 @@ package("sol")
     set_sourcedir(path.join(os.scriptdir(), "sol"))
 package_end()
 
-add_includedirs(
-    ".",                   -- hv
-    "fmt/include",
-    "optionals/include",
-    "result/include",
-    "source_location/include",
-    "sol/include",
-    "pybind11/include", 
-    { public = true }
-)
 
--- if AyanConfig ~= nil then 
---     print(AyanConfig.Extensions.Python.InterpreterPath)
--- end 

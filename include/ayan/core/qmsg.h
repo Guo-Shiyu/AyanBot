@@ -2,27 +2,17 @@
 
 #include "ayan/fwd.h"
 #include "ayan/concepts/iterable.h"
+#include "ayan/import/optional.h"
 
 #include <variant>
 #include <string>
-#include <cuchar>
 #include <vector>
+#include <functional>
 
 namespace ayan::literals
 {
 
-    /* constexpr */ std::u32string operator"" u32(const char *str, size_t len)
-    {
-        static std::vector<char32_t> dyn_buf{};
-
-        if (len > dyn_buf.size())
-            dyn_buf.reserve(len * 2);
-
-        dyn_buf.clear();
-        std::mbstate_t state{};
-        size_t nchar = std::mbrtoc32(dyn_buf.data(), str, len, &state);
-        return std::u32string(dyn_buf.data(), nchar);
-    }
+    /* constexpr */ std::u32string operator"" _utf8(const char *str, size_t len);
 }
 
 namespace ayan
@@ -67,7 +57,7 @@ namespace ayan
     {
         std::string file; // 语音文件名
         std::string url;  // 语音文件 url
-        bool is_magic;    // 变声为 true, 原声为 false
+        bool is_magic;    // 变声 true, 原声为 false
     };
 
     // 回复消息
@@ -111,16 +101,12 @@ namespace ayan
     //     json operator()(const ReplySeg &reply);
     // };
 
-    // template <class C>
-    // concept IterableSegmentContainer = requires(C container)
-    // {
-    //     requires Iterable<C>;
-    //     {std::is_same<decltype(*std::begin(container)), Segment>()};
-    // };
-
-    // 一条 qq 聊天消息, 内部包含多个消息段
+    // 主动构造的 qq 聊天消息, 内部包含多个消息段
     class Message
     {
+    protected:
+        constexpr static auto kDefaultReserveSize = 8U;
+
     public:
         Message() = delete;
         Message(const Message &) = default;
@@ -129,7 +115,7 @@ namespace ayan
     public:
         explicit Message(MsgSegment &&seg) : segs_()
         {
-            segs_.reserve(8);
+            segs_.reserve(kDefaultReserveSize);
             segs_.push_back(std::forward<MsgSegment>(seg));
         }
 
@@ -141,44 +127,11 @@ namespace ayan
         // Message(std::u32string &&u32text);
 
     public:
-        // static Message from(const json &raw);
+        size_t len()
+        {
+            return segs_.size();
+        }
 
-    public:
-        // template <IsSegment S>
-        // std::vector<S> collect() const
-        // {
-        //     std::vector<S> ret{};
-        //     ret.reserve(_segs.size());
-        //     for (auto &seg : _segs)
-        //         if (std::holds_alternative<S>(seg))
-        //             ret.push_back(std::get<S>(seg));
-        //     return ret;
-        // }
-
-        // template <IsSegment S>
-        // Message &transform(const std::function<void(S &)> &fn)
-        // {
-        //     for (auto &seg : _segs)
-        //         if (std::holds_alternative<S>(seg))
-        //             fn(seg);
-
-        //     return *this;
-        // }
-
-        // template <IsSegment S>
-        // bool check_first(const std::function<bool(S &)> &fn)
-        // {
-        //     for (auto &seg : _segs)
-        //         if (std::holds_alternative<S>(seg))
-        //             return fn(std::get<S>(seg));
-
-        //     return false;
-        // }
-
-        // const json &as_json() const;
-        // std::string dump() const;
-
-    public:
     protected:
         std::vector<MsgSegment> segs_;
     };
@@ -187,93 +140,186 @@ namespace ayan
     class MessageView : public Message
     {
     public:
+        constexpr static auto kNoSignificantId = std::numeric_limits<MsgId>::max();
+
+        using Self = MessageView;
+
+    public:
+        MessageView() = delete;
+        MessageView(const MessageView &) = default;
+        ~MessageView() = default;
+
+    public:
+        MessageView(Message &&msg, MsgId id) : Message(std::forward<Message>(msg)), id_(id) {}
+
+        static Self from(Message &&msg, MsgId id = kNoSignificantId)
+        {
+            return MessageView(std::forward<Message>(msg), id);
+        }
+
+    public:
         MsgId id() const
         {
             return id_;
+        }
+
+        /// 保留前 n 个消息段， 在消息段数量小于 n 时， 不进行操作
+        Self &take(size_t n)
+        {
+            if (n < segs_.size())
+                segs_.resize(n);
+            return *this;
+        }
+
+        /// 只保留类型为 Seg 的消息段
+        template <IsMsgSegment Seg>
+        Self &take()
+        {
+            std::erase_if(segs_, [](const MsgSegment &seg)
+                          { return not std::holds_alternative<Seg>(seg); });
+            return *this;
+        }
+
+        /// 保留类型为 Seg 并且 cond 返回 true 的消息段
+        template <IsMsgSegment Seg>
+        Self &take_if(const std::function<bool(const Seg &)> &cond)
+        {
+            std::erase_if(segs_, [](const MsgSegment &seg)
+                          { return not std::holds_alternative<Seg>(seg) || cond(std::get<Seg>(seg)); });
+            return *this;
+        }
+
+        /// 过滤掉所有类型为 Seg 且 cond 返回 true 的的消息段
+        template <IsMsgSegment Seg>
+        Self &filter(const std::function<bool(const Seg &)> &cond)
+        {
+            std::erase_if(segs_, [](const MsgSegment &seg)
+                          { return std::holds_alternative<Seg>(seg) && cond(std::get<Seg>(seg)); });
+            return *this;
+        }
+
+        /// 将所有相邻的 text 段合并
+        Self &flatten()
+        {
+            /// TODO:
+
+            return *this;
+        }
+
+        template <IsMsgSegment Seg, template <typename S> typename Container = std::vector>
+        Container<Seg> collect() const
+        {
+            Container<Seg> ret{};
+            if constexpr (std::is_same_v<Container, std::vector>())
+                ret.reserve(segs_.size());
+
+            for (auto &seg : segs_)
+                if (std::holds_alternative<Seg>(seg))
+                    ret.emplace(std::get<Seg>(seg));
+            return ret;
+        }
+
+        template <IsMsgSegment Seg>
+        Self &transform(const std::function<void(const Seg &)> &trans)
+        {
+            for (auto &seg : segs_)
+                if (std::holds_alternative<Seg>(seg))
+                    trans(seg);
+            return *this;
+        }
+
+        template <IsMsgSegment FromSeg, IsMsgSegment ToSeg>
+        Self &transform_to(const std::function<ToSeg(const FromSeg &&)> &trans)
+        {
+            for (auto &seg : segs_)
+                if (std::holds_alternative<FromSeg>(seg))
+                    seg.emplace(trans(std::move(seg)));
+
+            return *this;
+        }
+
+        template <IsMsgSegment Seg>
+        Optional<bool> check_first(const std::function<bool(const Seg &)> &cond)
+        {
+            for (auto &seg : segs_)
+                if (std::holds_alternative<Seg>(seg))
+                    return make_optional(cond(std::get<Seg>(seg)));
+            return NullOpt;
+        }
+
+        template <IsMsgSegment Seg>
+        Optional<Seg> take_first()
+        {
+            if (std::holds_alternative<Seg>(segs_.front()))
+                return make_optional(segs_.front());
+            return NullOpt;
         }
 
     private:
         MsgId id_;
     };
 
-    namespace detail
-    {
-        template <typename T>
-        concept IsImageOrRecord = requires(T _)
-        {
-            {std::is_same_v<T, ImageSeg> ||
-             std::is_same_v<T, RecordSeg>};
-        };
-    }
+    /// pimpl idom
+    class MsgBuilderImpl;
 
-    class MessageBuilder : public Message
+    class MessageBuilder
     {
     public:
         using Self = MessageBuilder;
+        using Impl = MsgBuilderImpl;
 
     private:
-        MessageBuilder() : Message(std::vector<MsgSegment>())
-        {
-            segs_.reserve(8);
-        }
+        MessageBuilder() = delete;
+        MessageBuilder(const MessageBuilder &) = delete;
+        MessageBuilder(std::vector<MsgSegment> &&segs);
 
     public:
-        MessageBuilder(const MessageBuilder &) = default;
-        MessageBuilder(MessageBuilder &&) = default;
+        MessageBuilder(MessageBuilder &&rhs) = default;
 
-    public:
         template <IsMsgSegment Seg>
-        requires detail::IsImageOrRecord<Seg>
+        requires std::is_same_v<Seg, RecordSeg>
         static Message from(Seg &&seg)
         {
             return Message(seg);
         }
 
         template <IsMsgSegment Seg>
-        requires (Seg s)  { {detail::IsImageOrRecord<Seg>}; }
-        static MessageBuilder from(Seg &&seg)
+        requires requires(Seg _) { {not std::is_same_v<Seg, RecordSeg>}; }
+        static MessageBuilder from(Seg &&s)
         {
-            return
+            std::vector<MsgSegment> segs{};
+            segs.push_back(std::move(s));
+            return MessageBuilder(std::move(segs));
         }
 
+        static Message record_local(const std::string &local_path);
+        static Message record_url(const std::string &url, bool cache = true, bool proxy = true, unsigned timeout = 0);
+
     public:
-        Self &
+        Self &text(const std::string &str);
+        Self &text(std::string &&str);
+        Self &text(const MsgStr &str);
+        Self &text(MsgStr &&str);
+
+        Self &face(FaceId face_id);
+        Self &at(Qid qq);
+        Self &reply(MsgId msgid);
+
+        Message image_local(const std::string &local_path, bool flash = false);
+        Message image_url(const std::string &url, bool flash = false, bool cache = true, bool proxy = true, unsigned timeout = 0);
+
+        Self &push_back(const MsgSegment &seg);
+        Self &emplace(MsgSegment &&seg);
+
+        Message build();
+
+    private:
+        Unique<MsgBuilderImpl> impl_;
     };
 
-    // class MsgBuilder
-    // {
-    // public:
-    //     MsgBuilder() = default;
-    //     MsgBuilder(const MsgBuilder &) = default;
-    //     MsgBuilder(const json &raw, std::vector<Segment> &&segs);
-    //     ~MsgBuilder() = default;
+    /// forward declare
+    class json;
 
-    // public:
-    //     static MsgBuilder from();
-    //     static MsgBuilder from(const std::string &u8str);
-    //     static MsgBuilder from(const std::wstring &wstr);
-    //     static MsgBuilder from(Segment &&seg);
-
-    // public:
-    //     MsgBuilder &text(const std::string &u8str);
-    //     MsgBuilder &text(const std::wstring &wstr);
-    //     MsgBuilder &face(int face_id);
-    //     MsgBuilder &at(Qid qq);
-    //     MsgBuilder &image_local(const std::string &local_path, bool flash = false);
-    //     MsgBuilder &image_url(const std::string &url, bool flash = false, bool cache = true, bool proxy = true, unsigned timeout = 0);
-    //     MsgBuilder &record_local(const std::string &local_path);
-    //     MsgBuilder &record_url(const std::string &url, bool cache = true, bool proxy = true, unsigned timeout = 0);
-    //     MsgBuilder &reply(MsgId msgid);
-    //     MsgBuilder &push(const Segment &seg, const json &seg_dump);
-    //     MsgBuilder &push(Segment &&seg, json &&seg_dump);
-    //     Message build();
-
-    // public:
-    //     const json &raw();
-    //     const std::vector<Segment> &segment();
-
-    // protected:
-    //     json _raw;
-    //     std::vector<Segment> _segs;
-    // };
+    void from_json(const json &j, TextSeg &seg);
+    void to_json(json &j, TextSeg &seg);
 }

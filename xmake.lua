@@ -47,21 +47,23 @@ elseif is_mode("release") then
     set_strip("all")
 end 
 
-add_includedirs("include", {public = true})
+includes("dep", "test")
 
-includes(
-    "dep", 
-    "test"
-)
-
-if AyanConfig.Extensions.Python then 
-    print("using python extension")
-end 
-
+add_includedirs("include", { public = true })
 -- libayan / ayan.lib 
 target("ayan")
     set_kind("static")
-    add_files("src/*.cpp")
+    add_files("src/*.cpp", "src/*/*.cpp")
+    add_includedirs(
+        "dep",                   -- hv
+        "dep/fmt/include",
+        "dep/optional/include",
+        "dep/result/include",
+        "dep/source_location/include",
+        "dep/sol/include",
+        "dep/pybind11/include", 
+        { public = true }
+    )
     remove_files("src/main.cpp")
 
 -- HelloAyan.exe 
