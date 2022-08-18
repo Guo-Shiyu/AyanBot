@@ -19,6 +19,7 @@ namespace ayan
 {
     using MsgId = int32_t;
     using MsgStr = std::u32string;
+    using MsgStrView = 
 
     // 纯文本消息
     struct TextSeg
@@ -201,7 +202,28 @@ namespace ayan
         /// 将所有相邻的 text 段合并
         Self &flatten()
         {
-            /// TODO:
+            for (auto i = 0U; i < segs_.size(); i++)
+            {
+                auto &cur = segs_.at(i);
+                if (std::holds_alternative<TextSeg>(cur))
+                {
+                    auto &src = std::get<TextSeg>(cur).text;
+                    for (auto j = i + 1; j < segs_.size(); j++)
+                    {
+                        auto &nxt = segs_.at(j);
+                        if (std::holds_alternative<TextSeg>(nxt))
+                        {
+                            src.append(std::get<TextSeg>(nxt).text);
+
+                            // swap to end and pop back
+                            std::swap(segs_[j], segs_.back());
+                            src.pop_back();
+                        }
+                        else
+                            break;
+                    }
+                }
+            }
 
             return *this;
         }
@@ -292,21 +314,20 @@ namespace ayan
             return MessageBuilder(std::move(segs));
         }
 
+        /// 语音消息, 不支持继续构造消息
         static Message record_local(const std::string &local_path);
         static Message record_url(const std::string &url, bool cache = true, bool proxy = true, unsigned timeout = 0);
 
     public:
-        Self &text(const std::string &str);
-        Self &text(std::string &&str);
-        Self &text(const MsgStr &str);
-        Self &text(MsgStr &&str);
+        Self &text(std::string_view str);
+        Self &text(MsgStrView str);
 
         Self &face(FaceId face_id);
         Self &at(Qid qq);
         Self &reply(MsgId msgid);
 
-        Message image_local(const std::string &local_path, bool flash = false);
-        Message image_url(const std::string &url, bool flash = false, bool cache = true, bool proxy = true, unsigned timeout = 0);
+        Self &image_local(const std::string &local_path, bool flash = false);
+        Self &image_url(const std::string &url, bool flash = false, bool cache = true, bool proxy = true, unsigned timeout = 0);
 
         Self &push_back(const MsgSegment &seg);
         Self &emplace(MsgSegment &&seg);

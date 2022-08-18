@@ -10,4 +10,3 @@ struct Overloaded : Types...
 
 template <class... Types>
 Overloaded(Types...) -> Overloaded<Types...>;
-
