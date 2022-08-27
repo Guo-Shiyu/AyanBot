@@ -30,23 +30,6 @@ if AyanConfig.Compilation.ToolChain ~= "default" then
     set_toolchains(AyanConfig.Compilation.ToolChain)
 end 
 
--- parallel compile
-set_policy("build.across_targets_in_parallel", true)
-
--- enable compile warning 
-set_policy("build.warning", true)
-set_warnings("all", "extra")
-
-
--- optimization setting and debug info 
-if is_mode("debug") then
-    set_symbols("debug")
-elseif is_mode("release") then
-    set_optimize("fastest")
-    set_policy("build.optimization.lto", true)
-    set_strip("all")
-end 
-
 includes("dep", "test")
 
 add_includedirs("include", { public = true })

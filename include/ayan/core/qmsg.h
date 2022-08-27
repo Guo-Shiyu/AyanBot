@@ -19,7 +19,7 @@ namespace ayan
 {
     using MsgId = int32_t;
     using MsgStr = std::u32string;
-    using MsgStrView = 
+    using MsgStrView = std::u32string_view;
 
     // 纯文本消息
     struct TextSeg
@@ -338,9 +338,9 @@ namespace ayan
         Unique<MsgBuilderImpl> impl_;
     };
 
-    /// forward declare
-    class json;
+    // /// forward declare
+    // class json;
 
-    void from_json(const json &j, TextSeg &seg);
-    void to_json(json &j, TextSeg &seg);
+    // void from_json(const json &j, TextSeg &seg);
+    // void to_json(json &j, TextSeg &seg);
 }

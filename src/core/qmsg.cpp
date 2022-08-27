@@ -1,6 +1,8 @@
 #include "ayan/core/qmsg.h"
 #include "ayan/import/json.h"
 
+using json = nlohmann::json;
+
 #include <cuchar>
 
 namespace ayan
@@ -22,5 +24,8 @@ namespace ayan
 
     class MsgBuilderImpl : public Message
     {
+    private:
+        json raw_;
+
     };
 }
