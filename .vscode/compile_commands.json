@@ -1,0 +1,11 @@
+[
+{
+  "directory": "c:\\Users\\User\\Github\\AyanBot",
+  "arguments": ["clang.exe", "-c", "-Qunused-arguments", "-m64", "-g", "-Wall", "-std=c++20", "-Iinclude", "-o", "build\\.objs\\HelloAyan\\windows\\x64\\debug\\src\\main.cpp.obj", "src\\main.cpp"],
+  "file": "src\\main.cpp"
+},
+{
+  "directory": "c:\\Users\\User\\Github\\AyanBot",
+  "arguments": ["clang.exe", "-c", "-Qunused-arguments", "-m64", "-g", "-Wall", "-std=c++20", "-Iinclude", "-o", "build\\.objs\\ayan\\windows\\x64\\debug\\src\\test.cpp.obj", "src\\test.cpp"],
+  "file": "src\\test.cpp"
+}]

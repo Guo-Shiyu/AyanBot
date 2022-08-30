@@ -45,3 +45,6 @@ vs2022/
 out/
 dep/out/
 build/
+
+# vscode 
+!/.vscode
