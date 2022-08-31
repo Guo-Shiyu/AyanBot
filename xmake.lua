@@ -23,7 +23,7 @@ AyanConfig = {
 
 add_rules("mode.debug", "mode.debug")
 
-set_languages("cxx20")
+set_languages("cxxlatest")
 
 -- switch toolchain 
 if AyanConfig.Compilation.ToolChain ~= "default" then
@@ -32,13 +32,17 @@ end
 
 includes("dep", "test")
 
-add_includedirs("include", { public = true })
 -- libayan / ayan.lib 
 target("ayan")
     set_kind("static")
     add_files("src/*.cpp", "src/*/*.cpp")
+    
+    -- include/ayan
+    add_includedirs("include", { public = true })
+
+    -- dep/*
     add_includedirs(
-        "dep",                   -- hv
+        "dep",                   -- libhv
         "dep/fmt/include",
         "dep/optional/include",
         "dep/result/include",
@@ -48,6 +52,7 @@ target("ayan")
         { public = true }
     )
     remove_files("src/main.cpp")
+    set_targetdir("build/lib")
 
 -- HelloAyan.exe 
 target("HelloAyan")

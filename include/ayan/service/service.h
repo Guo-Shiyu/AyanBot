@@ -59,7 +59,7 @@ namespace ayan
         template <typename Sev, typename B = Bot, typename E = Event>
         concept IsServiceImpl = requires(Sev s, B b, E e)
         {
-            {s.prelude()};
+            {s.usuage()};
             {s.load(b)};
             {s.unload(b)};
             {s.run(b, e)};

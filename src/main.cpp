@@ -2,13 +2,14 @@
 
 using namespace ayan;
 
+#include "ayan/utils/util.h"
 #include <iostream>
 
 int main(int argc, char **argv)
 {
 	util::clear_screen();
 
-	std::cout << "hello, Ayan!" << std::endl;
+	std::cout << "hello, Ayan!" << std::endl; 
 
 	// auto env = Env::from()
 	// 			   .with_name("Global")

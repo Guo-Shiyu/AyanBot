@@ -1,17 +1,23 @@
 #pragma once
 
 #include "ayan/config.h"
-#include <iosfwd>
+#include <iostream>
 
 namespace ayan
 {
     struct LogRedirectSet
     {
-        std::ostream *dbg;
-        std::ostream *log;
-        std::ostream *err;
+        std::ostream *dbg_;
+        std::ostream *log_;
+        std::ostream *err_;
 
-        explicit LogRedirectSet();
+        explicit LogRedirectSet()
+        {
+            dbg_ = &std::cout;
+            log_ = &std::cout;
+            err_ = &std::cerr;
+        }
+
         explicit LogRedirectSet(const LogRedirectSet &) = default;
     };
 
@@ -20,11 +26,11 @@ namespace ayan
         template <typename... Args>
         Logger &log(std::string_view fmt, Args &&...args)
         {
-            *log << fmt << std::endl;
+            (*log_ << fmt << '\n').flush();
             return *this;
         }
 
         /// TODO:
-        /// err, dbg 
+        /// err, dbg
     };
 }
