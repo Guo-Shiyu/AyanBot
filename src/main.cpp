@@ -1,28 +1,32 @@
 ﻿#include "ayan/ayan.h"
+#include "ayan/core/bot.h"
+#include "ayan/core/service.h"
+#include "ayan/utils/util.h"
 
 using namespace ayan;
 
-#include "ayan/utils/util.h"
-#include <iostream>
+int main(int argc, char **argv) {
+  if (argc != 3) {
+    fmt::print("usuage: {0} <WebSocket Server IP> <Port>\n", argv[0]);
+    ::exit(0);
+  }
 
-int main(int argc, char **argv)
-{
-	util::clear_screen();
+  util::clear_screen();
 
-	std::cout << "hello, Ayan!" << std::endl; 
+  const char* ip = argv[1];
+  int port = std::atoi(argv[2]);
 
-	// auto env = Env::from()
-	// 			   .with_name("Global")
-	// 			   .with_thread_num(1)
-	// 			   .init();
+  fmt::print("hello ayan! \n");
 
-	// auto bot = Bot::from(env)
-	// 			   .connect("127.0.0.1", "6700")
-	// 			   .with_name("Ayan")
-	// 			   .init();
+  auto &env = Envir::global();
 
-	// bot->start();
+  auto ayan = BotBuilder::from(env)
+    .connect(ip, port)
+    .with_qid(2821006329)
+    .build();
 
-	util::block_here();
-	return 0;
+  ayan->subscribe<ServiceSecheduler>().run();
+
+  util::block_here();
+  return 0;
 }

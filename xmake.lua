@@ -7,6 +7,8 @@ AyanConfig = {
         
         -- "gcc" | "clang" | "msvc" | "default"
         ToolChain = "default",
+
+        OutputPath = "build",
     },
 
     Extensions = {
@@ -16,14 +18,14 @@ AyanConfig = {
         -- },
 
         -- Lua = {
-            
+
         -- }
     }
 }
 
 add_rules("mode.debug", "mode.debug")
 
-set_languages("cxxlatest")
+set_languages("c++20")
 
 -- switch toolchain 
 if AyanConfig.Compilation.ToolChain ~= "default" then
@@ -31,6 +33,10 @@ if AyanConfig.Compilation.ToolChain ~= "default" then
 end 
 
 includes("dep", "test")
+
+add_requires("hv", "fmt")
+
+-- if 
 
 -- libayan / ayan.lib 
 target("ayan")
@@ -42,7 +48,10 @@ target("ayan")
 
     -- dep/*
     add_includedirs(
-        "dep",                   -- libhv
+        -- libhv
+        "dep", "dep/libhv", "dep/libhv/evpp", "dep/libhv/base", "dep/libhv/ssl", "dep/libhv/event", "dep/libhv/cpputil", "dep/libhv/http",
+
+        -- others 
         "dep/fmt/include",
         "dep/optional/include",
         "dep/result/include",
@@ -52,13 +61,15 @@ target("ayan")
         { public = true }
     )
     remove_files("src/main.cpp")
-    set_targetdir("build/lib")
+    set_targetdir(AyanConfig.Compilation.OutputPath.."/lib")
+    add_files("build/.packages/**/*.a")
 
 -- HelloAyan.exe 
 target("HelloAyan")
     set_kind("binary")
     add_deps("ayan")
     add_files("src/main.cpp")
+    set_targetdir(AyanConfig.Compilation.OutputPath.."/app")
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io

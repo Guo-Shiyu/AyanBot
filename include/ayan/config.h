@@ -8,8 +8,6 @@ namespace ayan
     {
         constexpr std::string_view
             kDefaultBotName = "ayan";
-
-        constexpr std::string_view
-            kLogFormat = "[{0}] [{1}] [{2}] [{3}]: {4}";
     }
 }
+
