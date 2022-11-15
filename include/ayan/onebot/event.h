@@ -7,12 +7,14 @@
 namespace onebot {
 namespace message {
 namespace detail {
-template <typename T, typename S> struct MessageBase {
+
+template <typename T, typename S> 
+struct MessageBase {
   T subtype;
   S sender;
   int64_t time;    // 时间戳
   MsgId msgid;     // 消息 id
-  Message message; // 消息内容
+  MessageView message; // 消息内容
 };
 } // namespace detail
 
@@ -207,6 +209,7 @@ using namespace message;
 using namespace notice;
 using namespace request;
 using namespace meta;
+
 } // namespace onebot
 
 namespace ayan {
@@ -223,6 +226,7 @@ concept IsEvent = requires(T _) {
                           std::is_same_v<T, onebot::MsgEvent>
                     };
                   };
+
 } // namespace ayan
 
 //     struct EventParser
