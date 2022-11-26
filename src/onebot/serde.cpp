@@ -2,12 +2,8 @@
 #include "ayan/onebot/event.h"
 #include "ayan/onebot/message.h"
 
-#include <algorithm>
-#include <array>
-#include <functional>
-#include <initializer_list>
-#include <stdexcept>
-#include <string>
+#include "ayan/utils/container.h"
+#include "ayan/utils/util.h"
 
 using namespace onebot;
 
@@ -15,37 +11,15 @@ namespace ayan {
 
 template <typename T> using ParserFn = std::function<T(const json &)>;
 
-template <typename E> using ParserMap = std::map<std::string_view, ParserFn<E>>;
-
-template <typename Key, typename Value, size_t Size> struct KDenseMap {
-  using Elem = std::pair<Key, Value>;
-  std::array<Elem, Size> series_;
-
-  constexpr KDenseMap(std::initializer_list<Elem> &&i) {
-    auto src  = i.begin();
-    auto dest = series_.begin();
-
-    while (dest != series_.end()) {
-      *dest++ = *src++;
-    }
-  }
-
-  constexpr Value at(const Key &k) const {
-    auto it = std::find_if(series_.begin(), series_.end(),
-                           [&](const Elem &elem) { return elem.first == k; });
-    if (it != series_.end())
-      return it->second;
-    else
-      throw std::out_of_range("out of range in KDenseMap");
-  }
-};
+template <typename E, size_t Size = std::variant_size_v<E>>
+using ParserMap = KDenseMap<std::string_view, ParserFn<E>, Size>;
 
 const static ParserMap<RequestEvent> RequestCata = {
     {"friend",
      [](const json &packet) {
        return FriendRequest{
            .user_id = packet["user_id"].get<Qid>(),
-           .comment = packet["comment"].get<std::u32string>(),
+           .comment = utf8::utf8to32(packet["comment"].get<std::string_view>()),
            .flag    = packet["flag"].get<std::string>(),
        };
      }},
@@ -63,8 +37,8 @@ const static ParserMap<RequestEvent> RequestCata = {
            .type     = parse_type(packet["sub_type"].get<std::string_view>()),
            .group_id = packet["group_id"].get<Qid>(),
            .user_id  = packet["user_id"].get<Qid>(),
-           .comment  = packet["comment"].get<std::u32string>(),
-           .flag     = packet["flag"].get<std::string>(),
+           .comment = utf8::utf8to32(packet["comment"].get<std::string_view>()),
+           .flag    = packet["flag"].get<std::string>(),
        };
      }},
 };
@@ -85,10 +59,11 @@ const static ParserMap<MsgEvent> MsgCata = {
            [](const json &sender_field) -> PrivateMessageSender {
          const auto &sender = sender_field;
          return PrivateMessageSender{
-             .user_id  = sender["user_id"].get<Qid>(),
-             .nickname = sender["nickname"].get<std::u32string>(),
-             .sex      = sender["sex"].get<std::u32string>(),
-             .age      = sender["age"].get<int>(),
+             .user_id = sender["user_id"].get<Qid>(),
+             .nickname =
+                 utf8::utf8to32(sender["nickname"].get<std::string_view>()),
+             .sex = utf8::utf8to32(sender["sex"].get<std::string_view>()),
+             .age = sender["age"].get<int>(),
          };
        };
 
@@ -97,7 +72,8 @@ const static ParserMap<MsgEvent> MsgCata = {
            .sender  = parse_sender(packet["sender"]),
            .time    = packet["time"].get<int64_t>(),
            .msgid   = packet["message_id"].get<int>(),
-           .message = MessageParser::from_raw(packet["message"]),
+           .message = MessageView{MessageParser::from_raw(packet["message"]),
+                                  packet["message_id"]},
        };
      }},
 
@@ -125,16 +101,17 @@ const static ParserMap<MsgEvent> MsgCata = {
          const auto &sender = sender_field;
 
          GroupMessageSender ret{{
-             .user_id  = sender["user_id"].get<Qid>(),
-             .nickname = sender["nickname"].get<std::u32string>(),
-             .sex      = sender["sex"].get<std::u32string>(),
-             .age      = sender["age"].get<int>(),
+             .user_id = sender["user_id"].get<Qid>(),
+             .nickname =
+                 utf8::utf8to32(sender["nickname"].get<std::string_view>()),
+             .sex = utf8::utf8to32(sender["sex"].get<std::string_view>()),
+             .age = sender["age"].get<int>(),
          }};
 
-         ret.card  = sender["card"].get<std::u32string>();
-         ret.area  = sender["area"].get<std::u32string>();
-         ret.level = sender["level"].get<std::u32string>();
-         ret.title = sender["title"].get<std::u32string>();
+         ret.card  = utf8::utf8to32(sender["card"].get<std::string_view>());
+         ret.area  = utf8::utf8to32(sender["area"].get<std::string_view>());
+         ret.level = utf8::utf8to32(sender["level"].get<std::string_view>());
+         ret.title = utf8::utf8to32(sender["title"].get<std::string_view>());
          ret.role  = parse_role(sender["role"].get<std::string_view>());
          return ret;
        };
@@ -145,13 +122,14 @@ const static ParserMap<MsgEvent> MsgCata = {
             .sender  = parse_sender(packet["sender"]),
             .time    = packet["time"].get<int64_t>(),
             .msgid   = packet["message_id"].get<int>(),
-            .message = MessageParser::from_raw(packet["message"])}};
+            .message = MessageView{MessageParser::from_raw(packet["message"]),
+                                   packet["message_id"]}}};
        ret.group_id = packet["group_id"].get<Qid>();
        return ret;
      }},
 };
 
-const static ParserMap<NoticeEvent> NoticeCata = {
+const static ParserMap<NoticeEvent, 6> NoticeCata = {
     {"group_decrease",
      [](const json &packet) {
        auto parse_type = [](const std::string_view &type) -> LeaveType {
@@ -195,6 +173,7 @@ const static ParserMap<NoticeEvent> NoticeCata = {
            .msg_id  = packet["message_id"].get<MsgId>(),
        };
      }},
+
     {"group_recall",
      [](const json &packet) {
        return GroupMsgRecall{
@@ -203,6 +182,7 @@ const static ParserMap<NoticeEvent> NoticeCata = {
            .msg_id      = packet["message_id"].get<MsgId>(),
        };
      }},
+
     {"lucky_king",
      [](const json &packet) {
        return GroupLuckyKing{
@@ -211,6 +191,7 @@ const static ParserMap<NoticeEvent> NoticeCata = {
            .king_id  = packet["target_id"].get<Qid>(),
        };
      }},
+     
     {"notify",
      [](const json &packet) {
        if (packet.contains("sender_id"))

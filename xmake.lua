@@ -61,6 +61,7 @@ target("ayan")
         { public = true }
     )
     remove_files("src/main.cpp")
+
     set_targetdir(AyanConfig.Compilation.OutputPath.."/lib")
     add_files("build/.packages/**/*.a")
 

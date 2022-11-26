@@ -1,21 +1,26 @@
-#include "ayan/core/service.h"
-
-#include <cuchar>
+#include "ayan/core/bot.h"
 
 namespace ayan {
-namespace literals {
-std::u32string operator""_utf8(const char *str, size_t len) {
-  static std::vector<char32_t> dyn_buf{};
-  std::mbstate_t               state{};
 
-  if (len > dyn_buf.size())
-    dyn_buf.reserve(len * 2);
-  dyn_buf.clear();
+RunResult ServiceSecheduler::serve(const Shared<Bot> &bot, Event &event) noexcept {
 
-  size_t nchar = std::mbrtoc32(dyn_buf.data(), str, len, &state);
-  return std::u32string(dyn_buf.data(), nchar);
+#ifdef AYAN_TRACE_SERVICE
+  bot->dbg(srcloc, "[BEGIN] service `{}`", this->identity());
+  prelude().foreach ([&](auto &sep) {
+    bot->dbg("[BEGIN] service `{}`", sep.first);
+    auto &exec_state  = sep.second;
+    exec_state.result = exec_state.sev->serve(bot, event);
+    bot->dbg("[END] service `{}`", sep.first);
+  });
+  bot->dbg(srcloc, "[END] service `{}`", this->identity());
+#else
+  prelude().foreach ([&](auto &sep) {
+    auto &exec_state  = sep.second;
+    exec_state.result = exec_state.sev->serve(bot, event);
+  });
+#endif
+
+  return run(bot, event);
 }
-} // namespace literals
-
 
 } // namespace ayan

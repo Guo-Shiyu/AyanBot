@@ -1,17 +1,28 @@
 #pragma once
 
-#include "ayan/core/service.h"
+#include "ayan/core/bot.h"
 
 namespace ayan {
 
 class RefreshAll : public ServiceImpl<RefreshAll> {
 public:
-  using ExecResultType = void;
+  constexpr static service::RetCode ReturnCode = 221125;
 
-protected:
-  void usuage(ServiceManager *super, ServiceManager *self);
-  void load(const Shared<Bot> &botptr);
-  void unload(const Shared<Bot> &botptr);
-  RunResult run(Shared<Bot> botptr, Event &event);
+  using ExecResultType = size_t;
+
+public:
+  void usuage(ServiceManager *super, ServiceManager *self) {
+    super_ = super;
+  }
+
+  RunResult run(Shared<Bot> botptr, Event &event) {
+    return RunResult{
+        .ret   = ReturnCode,
+        .extra = super_->invalid_all(),
+    };
+  }
+
+private:
+  ServiceManager *super_;
 };
 } // namespace ayan

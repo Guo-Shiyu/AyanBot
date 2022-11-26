@@ -1,16 +1,31 @@
 [
 {
   "directory": "/home/shiyu/Github/AyanBot",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-std=c++20", "-Iinclude", "-Idep", "-Idep/libhv", "-Idep/libhv/evpp", "-Idep/libhv/base", "-Idep/libhv/ssl", "-Idep/libhv/event", "-Idep/libhv/cpputil", "-Idep/libhv/http", "-Idep/fmt/include", "-Idep/optional/include", "-Idep/result/include", "-Idep/source_location/include", "-Idep/sol/include", "-Idep/pybind11/include", "-o", "build/.objs/ayan/linux/x86_64/release/src/core/bot.cpp.o", "src/core/bot.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Iinclude", "-Idep", "-Idep/libhv", "-Idep/libhv/evpp", "-Idep/libhv/base", "-Idep/libhv/ssl", "-Idep/libhv/event", "-Idep/libhv/cpputil", "-Idep/libhv/http", "-Idep/fmt/include", "-Idep/optional/include", "-Idep/result/include", "-Idep/source_location/include", "-Idep/sol/include", "-Idep/pybind11/include", "-o", "build/.objs/ayan/linux/x86_64/debug/src/core/bot.cpp.o", "src/core/bot.cpp"],
   "file": "src/core/bot.cpp"
 },
 {
   "directory": "/home/shiyu/Github/AyanBot",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-std=c++20", "-Iinclude", "-Idep", "-Idep/libhv", "-Idep/libhv/evpp", "-Idep/libhv/base", "-Idep/libhv/ssl", "-Idep/libhv/event", "-Idep/libhv/cpputil", "-Idep/libhv/http", "-Idep/fmt/include", "-Idep/optional/include", "-Idep/result/include", "-Idep/source_location/include", "-Idep/sol/include", "-Idep/pybind11/include", "-o", "build/.objs/ayan/linux/x86_64/release/src/core/service.cpp.o", "src/core/service.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Iinclude", "-Idep", "-Idep/libhv", "-Idep/libhv/evpp", "-Idep/libhv/base", "-Idep/libhv/ssl", "-Idep/libhv/event", "-Idep/libhv/cpputil", "-Idep/libhv/http", "-Idep/fmt/include", "-Idep/optional/include", "-Idep/result/include", "-Idep/source_location/include", "-Idep/sol/include", "-Idep/pybind11/include", "-o", "build/.objs/ayan/linux/x86_64/debug/src/core/service.cpp.o", "src/core/service.cpp"],
   "file": "src/core/service.cpp"
 },
 {
   "directory": "/home/shiyu/Github/AyanBot",
-  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-std=c++20", "-Iinclude", "-Idep", "-Idep/libhv", "-Idep/libhv/evpp", "-Idep/libhv/base", "-Idep/libhv/ssl", "-Idep/libhv/event", "-Idep/libhv/cpputil", "-Idep/libhv/http", "-Idep/fmt/include", "-Idep/optional/include", "-Idep/result/include", "-Idep/source_location/include", "-Idep/sol/include", "-Idep/pybind11/include", "-o", "build/.objs/HelloAyan/linux/x86_64/release/src/main.cpp.o", "src/main.cpp"],
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Iinclude", "-Idep", "-Idep/libhv", "-Idep/libhv/evpp", "-Idep/libhv/base", "-Idep/libhv/ssl", "-Idep/libhv/event", "-Idep/libhv/cpputil", "-Idep/libhv/http", "-Idep/fmt/include", "-Idep/optional/include", "-Idep/result/include", "-Idep/source_location/include", "-Idep/sol/include", "-Idep/pybind11/include", "-o", "build/.objs/ayan/linux/x86_64/debug/src/onebot/api.cpp.o", "src/onebot/api.cpp"],
+  "file": "src/onebot/api.cpp"
+},
+{
+  "directory": "/home/shiyu/Github/AyanBot",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Iinclude", "-Idep", "-Idep/libhv", "-Idep/libhv/evpp", "-Idep/libhv/base", "-Idep/libhv/ssl", "-Idep/libhv/event", "-Idep/libhv/cpputil", "-Idep/libhv/http", "-Idep/fmt/include", "-Idep/optional/include", "-Idep/result/include", "-Idep/source_location/include", "-Idep/sol/include", "-Idep/pybind11/include", "-o", "build/.objs/ayan/linux/x86_64/debug/src/onebot/message.cpp.o", "src/onebot/message.cpp"],
+  "file": "src/onebot/message.cpp"
+},
+{
+  "directory": "/home/shiyu/Github/AyanBot",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Iinclude", "-Idep", "-Idep/libhv", "-Idep/libhv/evpp", "-Idep/libhv/base", "-Idep/libhv/ssl", "-Idep/libhv/event", "-Idep/libhv/cpputil", "-Idep/libhv/http", "-Idep/fmt/include", "-Idep/optional/include", "-Idep/result/include", "-Idep/source_location/include", "-Idep/sol/include", "-Idep/pybind11/include", "-o", "build/.objs/ayan/linux/x86_64/debug/src/onebot/serde.cpp.o", "src/onebot/serde.cpp"],
+  "file": "src/onebot/serde.cpp"
+},
+{
+  "directory": "/home/shiyu/Github/AyanBot",
+  "arguments": ["/usr/bin/gcc", "-c", "-m64", "-g", "-O0", "-std=c++20", "-Iinclude", "-Idep", "-Idep/libhv", "-Idep/libhv/evpp", "-Idep/libhv/base", "-Idep/libhv/ssl", "-Idep/libhv/event", "-Idep/libhv/cpputil", "-Idep/libhv/http", "-Idep/fmt/include", "-Idep/optional/include", "-Idep/result/include", "-Idep/source_location/include", "-Idep/sol/include", "-Idep/pybind11/include", "-o", "build/.objs/HelloAyan/linux/x86_64/debug/src/main.cpp.o", "src/main.cpp"],
   "file": "src/main.cpp"
 }]

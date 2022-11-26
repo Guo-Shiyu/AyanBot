@@ -1,7 +1,4 @@
 ﻿#include "ayan/ayan.h"
-#include "ayan/core/bot.h"
-#include "ayan/core/service.h"
-#include "ayan/utils/util.h"
 
 using namespace ayan;
 
@@ -12,20 +9,19 @@ int main(int argc, char **argv) {
   }
 
   util::clear_screen();
-
-  const char* ip = argv[1];
-  int port = std::atoi(argv[2]);
-
   fmt::print("hello ayan! \n");
 
-  auto &env = Envir::global();
+  const char *ip   = argv[1];
+  int         port = std::atoi(argv[2]);
 
-  auto ayan = BotBuilder::from(env)
-    .connect(ip, port)
-    .with_qid(2821006329)
-    .build();
+  auto ayan = //
+      BotBuilder::from(Envir::global())
+          .connect(ip, port)
+          .with_qid(2821006329)
+          .with_name("Ayan")
+          .build();
 
-  ayan->subscribe<ServiceSecheduler>().run();
+  ayan->run();
 
   util::block_here();
   return 0;

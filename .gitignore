@@ -47,7 +47,8 @@ dep/out/
 build/
 
 # vscode 
-!/.vscode
+!/.vscode/settings.json
+/.vscode/launch.json
 
 # clangd cache 
 .cache

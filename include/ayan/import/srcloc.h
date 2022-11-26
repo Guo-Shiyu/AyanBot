@@ -1,4 +1,4 @@
-#pragma once 
+#pragma once
 
 #include "source_location/source_location.hpp"
 

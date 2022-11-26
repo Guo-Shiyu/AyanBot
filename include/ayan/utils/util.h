@@ -1,8 +1,10 @@
 #pragma once
 
-#include "libhv/base/htime.h"
+#include "ayan/import/timefmt.h"
+#include "ayan/import/utf8.h"
 
 #include <chrono>
+#include <cuchar>
 #include <thread>
 
 namespace ayan {
@@ -44,33 +46,44 @@ inline void clear_screen() noexcept {
 }
 
 // get type's name as string_view in compile time
-template <typename T> constexpr auto type_name() noexcept {
+template <typename T>
+constexpr auto type_name() noexcept {
   std::string_view name, prefix, suffix;
 #ifdef __clang__
-  name = __PRETTY_FUNCTION__;
+  /// TODO:
+  /// remove namespace in prefix
+  name   = __PRETTY_FUNCTION__;
   prefix = "auto type_name() [T = ";
   suffix = "]";
 #elif defined(__GNUC__)
-  name = __PRETTY_FUNCTION__;
-  prefix = "constexpr auto type_name() [with T = ";
+  name   = __PRETTY_FUNCTION__;
+  prefix = "constexpr auto ayan::util::type_name() [with T = ";
   suffix = "]";
 #elif defined(_MSC_VER)
-  name = __FUNCSIG__;
+  name   = __FUNCSIG__;
   prefix = "auto __cdecl type_name<";
   suffix = ">(void) noexcept";
 #endif
+
   name.remove_prefix(prefix.size());
   name.remove_suffix(suffix.size());
   return name;
 }
 
-  inline std::string_view time_now()
-  {
-    static char buf[DATETIME_FMT_BUFLEN];
-    datetime_t dt = datetime_now();
-    datetime_fmt(&dt, buf);
-    return buf;
-  }
+inline std::string_view time_now() {
+  static char buf[DATETIME_FMT_BUFLEN];
+  datetime_t  dt = datetime_now();
+  datetime_fmt(&dt, buf);
+  return buf;
+}
 
 } // namespace util
+namespace literals {
+/* constexpr */ inline std::u32string operator"" _utf8(const char *str, size_t len) {
+  return utf8::utf8to32({str, len});
+}
+} // namespace literals
+
+using namespace literals;
+
 } // namespace ayan

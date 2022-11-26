@@ -22,3 +22,6 @@
 [submodule "dep/gtest"]
 	path = dep/gtest
 	url = https://github.com/google/googletest.git
+[submodule "dep/utfcpp"]
+	path = dep/utfcpp
+	url = https://github.com/nemtrif/utfcpp.git

@@ -52,12 +52,25 @@ target_compile_options(ayan PRIVATE
 set_target_properties(ayan PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(ayan PRIVATE cxx_std_20)
 if(MSVC)
+    target_compile_options(ayan PRIVATE $<$<CONFIG:Debug>:-Od>)
+else()
+    target_compile_options(ayan PRIVATE -O0)
+endif()
+if(MSVC)
+    target_compile_options(ayan PRIVATE -Zi)
+else()
+    target_compile_options(ayan PRIVATE -g)
+endif()
+if(MSVC)
     set_property(TARGET ayan PROPERTY
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 endif()
 target_sources(ayan PRIVATE
     src/core/bot.cpp
     src/core/service.cpp
+    src/onebot/api.cpp
+    src/onebot/message.cpp
+    src/onebot/serde.cpp
 )
 
 # target
@@ -88,6 +101,16 @@ target_compile_options(HelloAyan PRIVATE
 )
 set_target_properties(HelloAyan PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(HelloAyan PRIVATE cxx_std_20)
+if(MSVC)
+    target_compile_options(HelloAyan PRIVATE $<$<CONFIG:Debug>:-Od>)
+else()
+    target_compile_options(HelloAyan PRIVATE -O0)
+endif()
+if(MSVC)
+    target_compile_options(HelloAyan PRIVATE -Zi)
+else()
+    target_compile_options(HelloAyan PRIVATE -g)
+endif()
 if(MSVC)
     set_property(TARGET HelloAyan PROPERTY
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")

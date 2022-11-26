@@ -3,10 +3,9 @@
 #include <variant>
 
 template <class... Types>
-struct Overloaded : Types...
-{
-    using Types::operator()...;
+struct Match : Types... {
+  using Types::operator()...;
 };
 
 template <class... Types>
-Overloaded(Types...) -> Overloaded<Types...>;
+Match(Types...) -> Match<Types...>;

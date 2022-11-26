@@ -21,6 +21,5 @@ concept Iterable =
     } || requires(T value) {
            { std::begin(value) };
            { std::end(value) };
-           requires IterableRange<decltype(std::begin(value)),
-                                  decltype(std::end(value))>;
+           requires IterableRange<decltype(std::begin(value)), decltype(std::end(value))>;
          };
