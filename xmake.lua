@@ -63,7 +63,11 @@ target("ayan")
     remove_files("src/main.cpp")
 
     set_targetdir(AyanConfig.Compilation.OutputPath.."/lib")
-    add_files("build/.packages/**/*.a")
+    if is_plat("linux") then 
+        add_files("build/.packages/**/*.a")
+    elseif is_plat("windows") then 
+        add_files("build/.packages/**/*.lib")
+    end 
 
 -- HelloAyan.exe 
 target("HelloAyan")

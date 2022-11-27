@@ -15,7 +15,7 @@ namespace onebot {
 using HookFn = std::function<void(const json &)>;
 
 // 对应每次调用 onebot api 的 echo 字段
-using CallID = int;
+using CallID = size_t;
 
 } // namespace onebot
 
@@ -146,8 +146,12 @@ protected:
     return *this;
   }
 
-  // private:
-  //   static std::default_random_engine random;
+private: 
+  static size_t random() {
+    static std::default_random_engine engine{};
+    static std::uniform_int_distribution<size_t> uni{};
+    return uni(engine);
+  }
 
 protected:
   json                packet_;

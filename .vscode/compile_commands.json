@@ -1,0 +1,31 @@
+[
+{
+  "directory": "d:\\Github\\AyanBot",
+  "arguments": ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.34.31823\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/std:c++20", "/Iinclude", "/Idep", "/Idep\\libhv", "/Idep\\libhv\\evpp", "/Idep\\libhv\\base", "/Idep\\libhv\\ssl", "/Idep\\libhv\\event", "/Idep\\libhv\\cpputil", "/Idep\\libhv\\http", "/Idep\\fmt\\include", "/Idep\\optional\\include", "/Idep\\result\\include", "/Idep\\source_location\\include", "/Idep\\sol\\include", "/Idep\\pybind11\\include", "/Fobuild\\.objs\\ayan\\windows\\x64\\release\\src\\core\\bot.cpp.obj", "src\\core\\bot.cpp"],
+  "file": "src\\core\\bot.cpp"
+},
+{
+  "directory": "d:\\Github\\AyanBot",
+  "arguments": ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.34.31823\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/std:c++20", "/Iinclude", "/Idep", "/Idep\\libhv", "/Idep\\libhv\\evpp", "/Idep\\libhv\\base", "/Idep\\libhv\\ssl", "/Idep\\libhv\\event", "/Idep\\libhv\\cpputil", "/Idep\\libhv\\http", "/Idep\\fmt\\include", "/Idep\\optional\\include", "/Idep\\result\\include", "/Idep\\source_location\\include", "/Idep\\sol\\include", "/Idep\\pybind11\\include", "/Fobuild\\.objs\\ayan\\windows\\x64\\release\\src\\core\\service.cpp.obj", "src\\core\\service.cpp"],
+  "file": "src\\core\\service.cpp"
+},
+{
+  "directory": "d:\\Github\\AyanBot",
+  "arguments": ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.34.31823\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/std:c++20", "/Iinclude", "/Idep", "/Idep\\libhv", "/Idep\\libhv\\evpp", "/Idep\\libhv\\base", "/Idep\\libhv\\ssl", "/Idep\\libhv\\event", "/Idep\\libhv\\cpputil", "/Idep\\libhv\\http", "/Idep\\fmt\\include", "/Idep\\optional\\include", "/Idep\\result\\include", "/Idep\\source_location\\include", "/Idep\\sol\\include", "/Idep\\pybind11\\include", "/Fobuild\\.objs\\ayan\\windows\\x64\\release\\src\\onebot\\api.cpp.obj", "src\\onebot\\api.cpp"],
+  "file": "src\\onebot\\api.cpp"
+},
+{
+  "directory": "d:\\Github\\AyanBot",
+  "arguments": ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.34.31823\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/std:c++20", "/Iinclude", "/Idep", "/Idep\\libhv", "/Idep\\libhv\\evpp", "/Idep\\libhv\\base", "/Idep\\libhv\\ssl", "/Idep\\libhv\\event", "/Idep\\libhv\\cpputil", "/Idep\\libhv\\http", "/Idep\\fmt\\include", "/Idep\\optional\\include", "/Idep\\result\\include", "/Idep\\source_location\\include", "/Idep\\sol\\include", "/Idep\\pybind11\\include", "/Fobuild\\.objs\\ayan\\windows\\x64\\release\\src\\onebot\\message.cpp.obj", "src\\onebot\\message.cpp"],
+  "file": "src\\onebot\\message.cpp"
+},
+{
+  "directory": "d:\\Github\\AyanBot",
+  "arguments": ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.34.31823\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/std:c++20", "/Iinclude", "/Idep", "/Idep\\libhv", "/Idep\\libhv\\evpp", "/Idep\\libhv\\base", "/Idep\\libhv\\ssl", "/Idep\\libhv\\event", "/Idep\\libhv\\cpputil", "/Idep\\libhv\\http", "/Idep\\fmt\\include", "/Idep\\optional\\include", "/Idep\\result\\include", "/Idep\\source_location\\include", "/Idep\\sol\\include", "/Idep\\pybind11\\include", "/Fobuild\\.objs\\ayan\\windows\\x64\\release\\src\\onebot\\serde.cpp.obj", "src\\onebot\\serde.cpp"],
+  "file": "src\\onebot\\serde.cpp"
+},
+{
+  "directory": "d:\\Github\\AyanBot",
+  "arguments": ["C:\\Program Files\\Microsoft Visual Studio\\2022\\Preview\\VC\\Tools\\MSVC\\14.34.31823\\bin\\HostX64\\x64\\cl.exe", "/c", "/EHsc", "/nologo", "/std:c++20", "/Iinclude", "/Idep", "/Idep\\libhv", "/Idep\\libhv\\evpp", "/Idep\\libhv\\base", "/Idep\\libhv\\ssl", "/Idep\\libhv\\event", "/Idep\\libhv\\cpputil", "/Idep\\libhv\\http", "/Idep\\fmt\\include", "/Idep\\optional\\include", "/Idep\\result\\include", "/Idep\\source_location\\include", "/Idep\\sol\\include", "/Idep\\pybind11\\include", "/Fobuild\\.objs\\HelloAyan\\windows\\x64\\release\\src\\main.cpp.obj", "src\\main.cpp"],
+  "file": "src\\main.cpp"
+}]

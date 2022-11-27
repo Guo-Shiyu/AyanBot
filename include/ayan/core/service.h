@@ -191,7 +191,7 @@ private:
 
 template <typename Impl>
 class ServiceImpl : public ServiceConcept,
-                    protected inner::SevRegister<Impl>,
+                    public inner::SevRegister<Impl>,
                     public std::enable_shared_from_this<Impl> {
 public:
   constexpr std::string_view identity() const noexcept override final {

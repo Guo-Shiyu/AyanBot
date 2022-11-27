@@ -7,6 +7,11 @@
 
 #include <limits>
 
+#ifdef  _MSC_VER 
+#undef max 
+#undef min 
+#endif 
+
 namespace onebot {
 using MsgId      = int32_t;
 using MsgStr     = std::u32string;
@@ -114,7 +119,7 @@ protected:
 // 收到的一条消息, 包含消息 id
 class MessageView : public Message {
 public:
-  constexpr static MsgId kNoSignificantId = std::numeric_limits<MsgId>::max();
+  static constexpr auto kNoSignificantId = std::numeric_limits<MsgId>::max();
 
   using Self = MessageView;
 
