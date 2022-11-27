@@ -74,6 +74,8 @@ target("HelloAyan")
     set_kind("binary")
     add_deps("ayan")
     add_files("src/main.cpp")
+    set_strip("all")
+    set_policy("build.optimization.lto", true)
     set_targetdir(AyanConfig.Compilation.OutputPath.."/app")
 
 --
