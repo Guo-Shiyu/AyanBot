@@ -234,10 +234,6 @@ public:
   /// auto run(Shared<Bot> botptr, Event &event) -> RunResult;
   RunResult serve(const Shared<Bot> &bot, Event &event) noexcept override {
     auto impl = static_cast<Impl *>(this);
-    mgr_.foreach ([&](auto &sep) {
-      auto &exec_state  = sep.second;
-      exec_state.result = exec_state.sev->serve(bot, event);
-    });
     return impl->run(bot, event);
   }
 
