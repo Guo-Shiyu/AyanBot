@@ -1,13 +1,10 @@
 AyanConfig = {
 
-    Compilation = {
-        -- "fastest" | "smallest"
-        -- only take effect in release mode
-        Optimize = "fastest",   
-        
+    Compilation = { 
         -- "gcc" | "clang" | "msvc" | "default"
-        ToolChain = "default",
+        ToolChain = "clang",
 
+        -- */AyanBot/build 
         OutputPath = "build",
     },
 
@@ -36,9 +33,7 @@ includes("dep", "test")
 
 add_requires("hv", "fmt")
 
--- if 
-
--- libayan / ayan.lib 
+-- libayan | ayan.lib 
 target("ayan")
     set_kind("static")
     add_files("src/*.cpp", "src/*/*.cpp")
