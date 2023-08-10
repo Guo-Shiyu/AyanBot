@@ -49,6 +49,7 @@ build/
 # vscode 
 !/.vscode/settings.json
 /.vscode/launch.json
+/.vscode/compile_commands.json
 
 # clangd cache 
 .cache
