@@ -2,7 +2,7 @@ AyanConfig = {
 
     Compilation = { 
         -- "gcc" | "clang" | "msvc" | "default"
-        ToolChain = "clang",
+        ToolChain = "default",
 
         -- */AyanBot/build 
         OutputPath = "build",
@@ -72,6 +72,12 @@ target("HelloAyan")
     set_strip("all")
     set_policy("build.optimization.lto", true)
     set_targetdir(AyanConfig.Compilation.OutputPath.."/app")
+
+    if is_plat("windows") then 
+        after_link(function (target) 
+            os.cp("build/.packages/**/*.dll", "build/app")            
+        end)
+    end 
 
 --
 -- If you want to known more usage about xmake, please see https://xmake.io
