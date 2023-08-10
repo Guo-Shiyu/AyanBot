@@ -22,13 +22,7 @@ public:
 
     std::visit(
         Match{
-            [&](MsgEvent &msg) { std::visit(get_event_type, msg); },
-
-            [&](NoticeEvent &ntc) { std::visit(get_event_type, ntc); },
-
-            [&](MetaEvent &meta) { std::visit(get_event_type, meta); },
-
-            [&](RequestEvent &req) { std::visit(get_event_type, req); },
+              [&](auto& e) { std::visit(get_event_type, e); }
         },
         event);
 
