@@ -17,15 +17,14 @@
         |-...
 ~~~
 
-# Build 
-Ayan 使用 [xmake](https://github.com/xmake-io/xmake) 构建，以达到跨平台快速构建的目的。
-
 ## 环境准备
 1. 要求编译器支持 C++ 20 标准   
 下面列出的版本为已经验证过的可用版本， 不保证是对应编译器的最低可用版本  
     + MSVC 17.0 (VS2022) 
     + Clang 10.0.0
-    + GCC unknown
+    + GCC 11.4 
+   
+
 2. 安装 xmake  
 可以从 [这里](https://xmake.io/#/guide/installation) 找到安装 xmake 的办法
 
@@ -36,107 +35,61 @@ Ayan 使用 [xmake](https://github.com/xmake-io/xmake) 构建，以达到跨平�
     + [Walle-core](https://github.com/abrahum/Walle-core)   
     基于 Rust 的跨平台（存疑） onebot 实现， 支持 onebot11/12     
      
-    你也可以参照 
 
-## 编译  
-1. clone 本项目后， 进入目录， 执行 xmake 命令， 将会生成 build 文件夹以及编译产物。
-~~~
-    $ git clone https://github.com/SilverCicada/AyanBot.git 
-    $ cd AyanBot 
-    $ xmake 
-~~~
+# Build 
+Ayan 使用 [xmake](https://github.com/xmake-io/xmake) 跨平台构建，参见 [BUILD.md](../BUILD.md).  
 
-在这个过程中会xmake自动寻找并安装依赖。  
-
-注意：xmake 默认不使用代理进行下载， 若安装依赖时间过长或出现网络连接失败需要手动下载， 请通过以下命令配置代理 
-~~~
-    $ xmake g --help
-    -x PROXY, --proxy=PROXY  Use proxy on given port. [PROTOCOL://]HOST[:PORT]
-                                 e.g.
-                                 - xmake g --proxy='http://host:port'
-                                 - xmake g --proxy='https://host:port'
-                                 - xmake g --proxy='socks5://host:port'
-~~~
-
-3. 若需要生成特定工程项目, 使用:
-
-~~~
-    Visual Studio:
-    $ xmake project -k vsxmake
-    
-    makefile:
-    $ xmake project -k makefile
-
-    或者参阅其官方文档生成 CMake 项目
-~~~
-
-
-4. 编译成功后, 输入以下命令运行项目， 出现以下字样， 说明编译成功。
-~~~
-[20xx-xx-xx hh:mm:ss] [Ayan] [INFO]: connecting to server: <ip>:<port>
-~~~
-
-5. 参照后续方法运行 HelloService.
-
-# Run Hello Service
+# Run First Service
 Ayan 本身不负责模拟 QQ 客户端对 raw UDP packet 拆包， 而是由协议适配器完成这项工作。 Ayan 只与协议适配器进行通信， 在此基础上实现消息处理逻辑。
 
 1. 开启某个 Onebot 协议适配器， 获取正向 WebSocket 服务的监听地址和端口号。  
 建议使用搜索引擎获取 go-cqhttp 的使用方法， 或者见本文末尾的潦草教程。
 
-2. 拷贝 example 目录下 Hello.hpp 到 src/service 下， 并修改 src/service/include.h 文件， 在文件末尾添加：
+2. 编辑 `main.cpp`:
+``` c++
+#include "ayan/ayan.h"
+#include "ayan/service/edump.h"
 
-~~~ c++
-    #include "Hello.hpp" 
-~~~ 
+using namespace ayan;
 
-6. 修改 Ayan.cpp, 其中注释了 diff 字样的语句为新加入/修改的语句：
+int main(int argc, char **argv) {
+  if (argc != 3) {
+    fmt::print("usuage: {0} <WebSocket Server IP> <Port>\n", argv[0]);
+    ::exit(0);
+  }
 
-~~~ c++
-    #include "Ayan.h"
+  util::clear_screen();
+  fmt::print("hello ayan! \n");
 
-    using namespace ayan;
+  // ip, port 字段即为 协议适配器 正向ws 所监听的地址和端口号
+  const char *ip   = argv[1];
+  int         port = std::atoi(argv[2]);
 
-    int main(int argc, char **argv)
-    {
-        std::system("chcp 65001 & cls");     
+  auto ayan = //
+      BotBuilder::from(Envir::global())
+          .connect(ip, port)
+          .with_qid(2821006329)
+          .with_name("Ayan")
+          .build();
 
-        auto env = Env::from()
-            .with_name("Global")
-            .with_thread_num(1)
-            .init();
+  // 为 bot 订阅该服务
+  ayan->subscribe<DumpOnebotEvent>();   
 
-        env->supply<HelloService, true>();   // diff-1
+  // 启动 bot 
+  ayan->run();
 
-        auto bot = Bot::from(env)
-            .connect("127.0.0.1", "6700")    // diff-2
-            .with_name("Ayan")
-            .init();
+  util::block_here();
+  return 0;
+}
+```
 
-        bot->start();
-
-        block_here();
-        return 0;
-    }
-~~~
-注意， diff-1 表明注册并自动为 env 中所有机器人订阅该服务, diff-2 处的 ip, port 字段即为刚刚 协议适配器 正向ws 所监听的地址和端口号。
-
-6. 启动 go-cqhttp, 并使用以下语句重新编译和启动 Ayan 
+3. 启动 go-cqhttp, 并使用以下语句重新编译和启动 Ayan 
 
 ~~~
     $ xmake 
-    $ xmake -run
+    $ xmake -run HelloAyan <ip> <port>
 ~~~
-
-你将会在 Ayan 的控制台中看到如下绿色字样
-
-~~~
-    [20xx-xx-xx hh-mm-ss] [Ayan] [DEBUG]: Welcome!, now is <current time>
-~~~
-
-此时 Ayan 启动完毕且服务加载成功。
-
-你可以将 example 目录下的文件复制到 src/service 目录下， 并在 src/service/include.h 中添加对应的 include 语句， 即可在 Ayan.cpp 订阅并使用 example 代码提供的服务。
+此时 Ayan 启动完毕且服务加载成功。每当收到消息时， 将会在 Ayan 的控制台中看到关于 event dump 的信息。
 
 其他服务的示例请参见 [example](../example/README.md)   
 开发定制化的服务请参见 [UserManual.md](UserManual.md) 以及 [1-Hello.md](1-Hello.md)

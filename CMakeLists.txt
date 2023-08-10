@@ -5,7 +5,67 @@
 # project
 cmake_minimum_required(VERSION 3.15.0)
 cmake_policy(SET CMP0091 NEW)
-project(ayan LANGUAGES CXX C)
+project(HelloAyan LANGUAGES CXX C)
+
+# target
+add_executable(HelloAyan "")
+set_target_properties(HelloAyan PROPERTIES OUTPUT_NAME "HelloAyan")
+set_target_properties(HelloAyan PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/app")
+add_dependencies(HelloAyan ayan)
+target_include_directories(HelloAyan PRIVATE
+    include
+    dep
+    dep/libhv
+    dep/libhv/evpp
+    dep/libhv/base
+    dep/libhv/ssl
+    dep/libhv/event
+    dep/libhv/cpputil
+    dep/libhv/http
+    dep/fmt/include
+    dep/optional/include
+    dep/result/include
+    dep/source_location/include
+    dep/sol/include
+    dep/pybind11/include
+)
+target_compile_options(HelloAyan PRIVATE
+    $<$<COMPILE_LANGUAGE:C>:-GL>
+    $<$<COMPILE_LANGUAGE:CXX>:-GL>
+)
+if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+    target_compile_options(HelloAyan PRIVATE /EHsc)
+else()
+    target_compile_options(HelloAyan PRIVATE -fcxx-exceptions)
+endif()
+set_target_properties(HelloAyan PROPERTIES CXX_EXTENSIONS OFF)
+target_compile_features(HelloAyan PRIVATE cxx_std_20)
+if(MSVC)
+    target_compile_options(HelloAyan PRIVATE $<$<CONFIG:Debug>:-Od>)
+else()
+    target_compile_options(HelloAyan PRIVATE -O0)
+endif()
+if(MSVC)
+    target_compile_options(HelloAyan PRIVATE -Zi)
+else()
+    target_compile_options(HelloAyan PRIVATE -g)
+endif()
+if(MSVC)
+    set_property(TARGET HelloAyan PROPERTY
+        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+endif()
+target_link_libraries(HelloAyan PRIVATE
+    ayan
+)
+target_link_directories(HelloAyan PRIVATE
+    build/lib
+)
+target_link_options(HelloAyan PRIVATE
+    -LTCG
+)
+target_sources(HelloAyan PRIVATE
+    src/main.cpp
+)
 
 # target
 add_library(ayan STATIC "")
@@ -45,12 +105,23 @@ target_include_directories(ayan INTERFACE
     dep/sol/include
     dep/pybind11/include
 )
-target_compile_options(ayan PRIVATE
-    $<$<COMPILE_LANGUAGE:C>:-m64>
-    $<$<COMPILE_LANGUAGE:CXX>:-m64>
-)
+if(CMAKE_CXX_COMPILER_FRONTEND_VARIANT STREQUAL "MSVC")
+    target_compile_options(ayan PRIVATE /EHsc)
+else()
+    target_compile_options(ayan PRIVATE -fcxx-exceptions)
+endif()
 set_target_properties(ayan PROPERTIES CXX_EXTENSIONS OFF)
 target_compile_features(ayan PRIVATE cxx_std_20)
+if(MSVC)
+    target_compile_options(ayan PRIVATE $<$<CONFIG:Debug>:-Od>)
+else()
+    target_compile_options(ayan PRIVATE -O0)
+endif()
+if(MSVC)
+    target_compile_options(ayan PRIVATE -Zi)
+else()
+    target_compile_options(ayan PRIVATE -g)
+endif()
 if(MSVC)
     set_property(TARGET ayan PROPERTY
         MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -61,53 +132,5 @@ target_sources(ayan PRIVATE
     src/onebot/api.cpp
     src/onebot/message.cpp
     src/onebot/serde.cpp
-)
-
-# target
-add_executable(HelloAyan "")
-set_target_properties(HelloAyan PROPERTIES OUTPUT_NAME "HelloAyan")
-set_target_properties(HelloAyan PROPERTIES RUNTIME_OUTPUT_DIRECTORY "${CMAKE_SOURCE_DIR}/build/app")
-add_dependencies(HelloAyan ayan)
-target_include_directories(HelloAyan PRIVATE
-    include
-    dep
-    dep/libhv
-    dep/libhv/evpp
-    dep/libhv/base
-    dep/libhv/ssl
-    dep/libhv/event
-    dep/libhv/cpputil
-    dep/libhv/http
-    dep/fmt/include
-    dep/optional/include
-    dep/result/include
-    dep/source_location/include
-    dep/sol/include
-    dep/pybind11/include
-)
-target_compile_options(HelloAyan PRIVATE
-    $<$<COMPILE_LANGUAGE:C>:-flto>
-    $<$<COMPILE_LANGUAGE:C>:-m64>
-    $<$<COMPILE_LANGUAGE:CXX>:-m64>
-    $<$<COMPILE_LANGUAGE:CXX>:-flto>
-)
-set_target_properties(HelloAyan PROPERTIES CXX_EXTENSIONS OFF)
-target_compile_features(HelloAyan PRIVATE cxx_std_20)
-if(MSVC)
-    set_property(TARGET HelloAyan PROPERTY
-        MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-endif()
-target_link_libraries(HelloAyan PRIVATE
-    ayan
-)
-target_link_directories(HelloAyan PRIVATE
-    build/lib
-)
-target_link_options(HelloAyan PRIVATE
-    -m64
-    -flto
-)
-target_sources(HelloAyan PRIVATE
-    src/main.cpp
 )
 

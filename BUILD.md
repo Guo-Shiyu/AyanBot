@@ -15,13 +15,14 @@ $ git submodule update --init --recursive
 之后也可以随时修改该文件来重设配置.   
 
 ~~~
-# 切换到 debug 构建, 默认是 release 
+# (可选) 切换到 debug 构建, 默认是 release 
 $ xmake f -m debug  
 
-$ xmake   
+# 构建
+$ xmake 
 ~~~ 
 
-注意， 如果是第一次构建, 需要先生成依赖 `hv`, `fmt`,  在命令框中选择 `Y`  即可.
+注意， 如果是第一次构建, 需要先生成依赖 `hv`, `fmt`,  在命令框中选择 `Y`  或使用 `xmake -y` 代替上述构建命令即可.
 
 更多 xmake 的功能参见 xmake 的官方文档.    
 
@@ -30,6 +31,7 @@ $ xmake
  传入 Onebot 协议适配器工作的 ip 和 端口号即可开始工作.    
  ~~~
  $ xmake r HelloAyan <Onebot WS Server IP> <Port>  
+ # e.g. xmake r HelloAyan 127.0.0.1 15698
  ~~~
  如果一切顺利, 将会在命令行中看到  
 
