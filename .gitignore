@@ -36,6 +36,7 @@
 
 # xmake
 .xmake/
+vsxmake2022/
 
 # VS
 vs2022/
