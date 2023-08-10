@@ -1,5 +1,5 @@
 # Build   
-众所周知 C++ 的包管理就是地狱, 而 Ayan 依赖一些开源库, 为了尽可能容易上手, Ayan 使用 [xmake](https://xmake.io/#/) 构建     
+Ayan 使用 [xmake](https://xmake.io/#/) 构建     
 
 以下操作需要系统中安装 xmake. 
   
@@ -15,10 +15,15 @@ $ git submodule update --init --recursive
 之后也可以随时修改该文件来重设配置.   
 
 ~~~
-$ xmake f -m release  # 切换到 debug 版本, 默认是 release 
+# 切换到 debug 构建, 默认是 release 
+$ xmake f -m debug  
+
 $ xmake   
 ~~~ 
-更多 xmake 的功能参见 xmake 的官方文档    
+
+注意， 如果是第一次构建, 需要先生成依赖 `hv`, `fmt`,  在命令框中选择 `Y`  即可.
+
+更多 xmake 的功能参见 xmake 的官方文档.    
 
 ## 4. 运行    
   在默认配置下, build 目录下的 app 目录中包含简单的 example,  lib 目录下包含构建出的库文件.     
