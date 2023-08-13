@@ -54,3 +54,4 @@ build/
 
 # clangd cache 
 .cache
+*.json
