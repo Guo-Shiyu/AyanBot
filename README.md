@@ -1,3 +1,10 @@
+# Notice
+由于 QQ 官方对协议库的封锁， 所有基于通讯协议的 onebot 协议适配器已经停止维护或不可用，Ayanbot 已事实上不再可用。
+
+-> [QQBot 的未来及迁移建议](https://github.com/Mrs4s/go-cqhttp/issues/2471)
+
+感谢上游每一位开发者为开源 QQ Bot 生态做出的贡献。 
+
 # AyanBot
 
 Ayan 是基于 Modern C++ 编写的轻量, 异步, 易于扩展的跨平台 Bot SDK。其底层与 onebot 实现进行交互,  为上层实现需求的开发者提供易于使用的基础接口。   
